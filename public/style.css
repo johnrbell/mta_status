@@ -81,7 +81,7 @@ html, body{
   font-weight: bold;
 }
 
-.smallstatus{
+.status{
   position: absolute;
   font-size: 14px;
   color: #fff;
@@ -95,7 +95,7 @@ html, body{
 a{ color: white }
 
 /* Long Status Information */
-.longstatus{
+.long_status{
   text-align: center;
   width: 90%;
   height: auto;

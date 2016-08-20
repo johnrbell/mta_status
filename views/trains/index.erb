@@ -1,0 +1,8 @@
+<% @trains.each do |name, status, long_status| %>
+  <div class="trainname">
+    <a href="<%= name %>">
+      <div class="letter" id="<%= name.downcase %>"><%= name %></div>
+      <div class="status"><%= status %></div>
+    </a>
+  </div>
+<% end %>
