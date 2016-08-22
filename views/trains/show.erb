@@ -1,0 +1,9 @@
+<div class="trainname">
+  <a href="<%= @train[:name] %>">
+    <div class="letter" id="<%= @train[:name].downcase %>"><%= @train[:name] %></div>
+    <div class="status"><%= @train[:status] %></div>
+  </a>
+</div>
+<% unless @train[:long_status].empty? %>
+  <div class="long_status"><%= @train[:long_status] %></div>
+<% end %>

@@ -1,130 +1,134 @@
-html, body{
-	margin: 0px;
-	padding: 0px;
-	font-family:"Helvetica Neue", "Arial";
-	color: white;
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: "Helvetica Neue", "Arial";
+  color: white;
 }
 
-.screen{/*SCREEN MASK FOR BG*/
-	height:100%;
-	width: 100%;
-	top: 0;
-	background-color: #222;
-	opacity: .7;
-	position: fixed;
-	z-index: -1;
+/* Screen mask */
+.screen {
+  height:100%;
+  width: 100%;
+  top: 0;
+  background-color: #222;
+  opacity: .7;
+  position: fixed;
+  z-index: -1;
 }
-.bg{/*BACKGROUND IMAGE*/
-	height:100%;
-	width: 100%;
-	background-color: #333;
-	background: url("https://source.unsplash.com/category/buildings/1600x1200/?new+york");
-	background-size: cover;
-	background-position: center;
-	z-index: -1;
-	top: 0;
-	position: fixed;
+
+/* Full background */
+.bg {
+  height:100%;
+  width: 100%;
+  background-color: #333;
+  background: url(https://source.unsplash.com/category/buildings/1600x1200/?new+york);
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  top: 0;
+  position: fixed;
   text-align: center;
 }
 
-
-
-
-
-
-
-
-/*TRAIN STUFF*/
-/*TRAIN STUFF*/
-/*TRAIN STUFF*/
-.container{
-	position: relative;
-	width: 90%;
-	max-width: 900px;
-	padding-left: auto;
-	padding-right: auto;
-}
-.trainname{/*CIRCLES*/
-	display: inline-block;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-bottom: 55px;
-}
-.letter{/*LETTER IN THE CIRCLE*/
-	width: 50px;
-	font-size: 35px;
-	position: absolute;
-	background-color: transparent;
-	padding-top: 4px;
-	font-weight: bold;
-}
-.smallstatus{/*STATUS FOR EACH CIRCLE*/
-	position: absolute;
-	font-size: 14px;
-	color: #fff;
-	height: 20px;
-	padding-top: 55px;
-	width: 80px;
-	margin-left: -15px;
-	text-align: center;
-}
-a{/*LINKS*/  
-	color: white;
+/* Header */
+.header {
+  text-align: center;
+  width: 100%;
+  height:auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0;
 }
 
-
-
-
-
-
-
-
-.header{/*HEADER CONTAINER*/
-	text-align: center;
-	width: 100%;
-	height:auto;
-	margin-top: 10px;
-	margin-bottom: 10px;
-
-	padding: 0;
-}
-.header h1{/*PAGE TITLE*/
-	font-size: 14vw;
-	line-height: 0px;
-	font-weight: lighter;
-}
-.header h2{/*SUBTITLE*/
-	font-size: 7.5vw;
-	line-height: 15px;
-	font-weight: lighter;
+.header h1 {
+  font-size: 14vw;
+  line-height: 0px;
+  font-weight: lighter;
 }
 
-
-/* MAKES HEADER RESPONSIVE (SORTA) */
-@media (min-width: 800px) {
-  .header h1{font-size: 90px}
-  .header h2{font-size: 30px;}
+.header h1 a {
+  color: #fff;
+  text-decoration: none;
 }
 
+.header h2 {
+  font-size: 7.5vw;
+  line-height: 15px;
+  font-weight: lighter;
+}
 
+/* Train Information */
+.container {
+  position: relative;
+  max-width: 900px;
+  text-align: center;
+  margin: 60px auto 0 auto;
+}
 
-/*for long status*/
-.longstatus{
-	text-align: center;
-	width: 90%;
-	height: auto;
-	font-size: 14px;
-	background-color: rgba(0,0,0,.85);
-	border-radius: 10px;
-	padding-top: 30px;
-	padding-left: 10px;
-	padding-right: 10px; 
-	padding-bottom: 40px;
-	z-index: 9999;
-  margin: 0px 0px 20px 0px;
-  top:250px;
+.trainname {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 10px 60px 10px;
+}
+
+.letter {
+  width: 50px;
+  font-size: 35px;
+  position: absolute;
+  background-color: transparent;
+  padding-top: 4px;
+  font-weight: bold;
+}
+
+.status {
+  position: absolute;
+  font-size: 14px;
+  color: #fff;
+  height: 20px;
+  padding-top: 55px;
+  width: 80px;
+  margin-left: -15px;
+  text-align: center;
+}
+
+a { color: white }
+
+/* Long Status Information */
+.long_status {
+  text-align: left;
+  width: 90%;
+  height: auto;
+  background-color: rgba(43, 43, 43, 0.85);
+  border-radius: 10px;
+  padding: 40px;
+  z-index: 9999;
+  margin: 0px auto 20px auto;
+  top: 250px;
   left: 50%;
+  font-size: 20px;
+  line-height: 32px;
+}
+
+.long_status span {
+  font-size: 27px;
+  padding-bottom: 12px;
+  color: yellow;
+  line-height: 53px;
+}
+
+.long_status u {
+  text-decoration: none;
+  color: yellow;
+}
+
+.long_status b {
+  color: #cecece;
+}
+
+/* Responsive Header */
+@media (min-width: 800px) {
+  .header h1 { font-size: 90px }
+  .header h2 { font-size: 30px }
 }
