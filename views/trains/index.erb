@@ -1,8 +1,10 @@
-<% @trains.each do |name, status, long_status| %>
-  <div class="trainname">
-    <a href="<%= name %>">
-      <div class="letter" id="<%= name.downcase %>"><%= name %></div>
-      <div class="status"><%= status %></div>
-    </a>
-  </div>
+<% @trains.each do |line, status, long_status| %>
+  <% line[:name].split("").each do |name| %>
+    <div class="trainname">
+      <a href="<%= name %>">
+        <div class="letter" id="<%= name.downcase %>"><%= name %></div>
+        <div class="status"><%= line[:status] %></div>
+      </a>
+    </div>
+  <% end %>
 <% end %>
