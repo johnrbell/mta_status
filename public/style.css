@@ -41,7 +41,7 @@ html, body {
 }
 
 .header h1 {
-  margin-top: 5px;
+  padding-top: 10px;
   font-size: 14vw;
   line-height: 0px;
   font-weight: lighter;
