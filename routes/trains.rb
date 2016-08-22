@@ -1,83 +1,60 @@
 class MtaStatus < Sinatra::Base
+  SERVICE_STATUS_URL = "http://web.mta.info/status/serviceStatus.txt".freeze
+
   get "/" do
-    @trains = get_train_data
+    @trains = trains_data
     erb :"trains/index"
   end
 
-  get "/:id" do
-    train = params[:id].upcase
-    return erb :"trains/error" unless train_lines.flatten.include? train
+  get "/:name" do
+    train = params[:name].upcase
+    return erb :"trains/error" unless valid_train? train
 
-    # working_hash = get_train_data
-    #
-    # almost_final_hash = []
-    # @final_hash = []
-    #
-    # working_hash.each do |train|
-    #   if train[0] == n.upcase
-    #     almost_final_hash.push(train[0],train[1],train[2])
-    #   end
-    # end
-    #
-    # if almost_final_hash != []
-    #   @final_hash.push(almost_final_hash)
-    #   erb :index
-    # else
-    #   "<center>Sorry, but this train does not exist.</center>"
-    # end
+    @train = train_data(train)
     erb :"trains/show"
   end
 
   private
 
-  def train_lines
-    [
-      %w(1 2 3),
-      %w(4 5 6),
-      %w(7),
-      %w(A C E),
-      %w(B D F M),
-      %w(G),
-      %w(J Z),
-      %w(L),
-      %w(N Q R),
-      %w(S)
-    ]
+  def service_status_data
+    Nokogiri::XML(open(SERVICE_STATUS_URL)) # @TODO This should be cached
   end
 
-  def parse_subway(data, row)
-    data
-      .xpath("//subway")
-      .xpath("//#{row}")
-      .first(train_lines.count)
-      .collect { |t| t.child.to_s }
+  def train_lines
+    %w(123 456 7 ACE BDFM G JZ L NQR S)
+  end
+
+  def valid_train?(train)
+    train_lines.join.split("").include? train
+  end
+
+  def line_name_for(train)
+    train_lines.each do |t|
+      return t if t.split("").include? train
+    end
   end
 
   def filter_html(html)
     html.to_s.gsub(/\n+ */, "").gsub(/&nbsp;|<br \/>/, " ")
   end
 
-  def get_train_data
-    # @TODO This should be cached for ~5 minutes.
-    data = Nokogiri::XML(open("http://web.mta.info/status/serviceStatus.txt"))
-    output = []
+  def parse_line(line, name = nil)
+    {
+      name: name || line.xpath("name").text,
+      status: line.xpath("status").text,
+      long_status: filter_html(line.xpath("text").text)
+    }
+  end
 
-    # MTA data is mashed together; we only care about train lines
-    trains = parse_subway(data, "name").zip(
-      parse_subway(data, "status"),
-      parse_subway(data, "text")
-    )
+  def train_data(name)
+    line_name = line_name_for(name)
+    line = service_status_data.xpath("//line[name='#{line_name}']")
+    parse_line(line, name)
+  end
 
-    trains.each do |train_line, status, long_status|
-      train_line.length.times do |train|
-        output.push([
-          train_line[train],
-          status,
-          filter_html(long_status)
-        ])
-      end
-    end
-
-    output
+  def trains_data
+    service_status_data.xpath("//line")
+      .map { |line| parse_line(line) }
+      .select { |line| train_lines.include? line[:name] }
   end
 end
