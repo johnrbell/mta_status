@@ -9,10 +9,9 @@
     $background.height(screen.height);
     $(window).resize($background.height(screen.height));
   }
-	
 	// each to give the trains color for their circles. 
 	$.each($('.trainname'),function(){
-		switch($(this).children('a').children('.letter').text()[0]) {
+		switch($(this).children('a').children('.letter').text()) {
 			case '1': case '2':	case '3':
 					$(this).css('background-color','#EC000A')
 					break;
@@ -45,7 +44,7 @@
 	})
 
 	// each to replace the MTA status text with my own status text. 
-	$.each($('.smallstatus'),function(){
+	$.each($('.status'),function(){
 		switch($(this).text()) {
 			case 'PLANNED WORK':
 				$(this).text('planned work.')
@@ -54,7 +53,7 @@
 				$(this).text('service change.')
 				break;
 			case 'DELAYS':
-				$(this).text('fucking delays.')
+				$(this).html('delayed <br> af.')
 				break;
 			case 'GOOD SERVICE':
 				$(this).text('all good.')
