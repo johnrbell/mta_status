@@ -1,6 +1,19 @@
 require "spec_helper"
 
 describe "Trains API" do
+  describe "GET /trains" do
+    it "responds with a 200" do
+      get "/api/trains"
+      expect(last_response.status).to eq 200
+    end
+
+    it "responds with train data" do
+      get "/api/trains"
+      response = JSON.parse(last_response.body)
+      expect(response).to_not be_empty
+    end
+  end
+
   describe "GET /trains/:id" do
     context "when the train is valid" do
       it "responds with a 200" do
