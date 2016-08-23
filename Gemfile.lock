@@ -3,6 +3,7 @@ GEM
   specs:
     backports (3.6.8)
     coderay (1.1.1)
+    diff-lcs (1.2.5)
     method_source (0.8.2)
     mini_portile2 (2.1.0)
     multi_json (1.12.1)
@@ -19,6 +20,19 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.2)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -39,6 +53,7 @@ PLATFORMS
 DEPENDENCIES
   nokogiri
   pry
+  rspec
   sinatra
   sinatra-contrib
 
