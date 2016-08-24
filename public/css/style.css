@@ -116,7 +116,17 @@ a { color: white }
   font-size: 17px;
   padding-bottom: 12px;
   color: yellow;
-  line-height: 33px;
+  display: block;
+}
+
+.long_status .TitleDelay {
+  padding: 0;
+}
+
+.long_status .DateStyle {
+  font-size: 14px;
+  font-style: italic;
+  color: #ffebae;
 }
 
 .long_status u {
@@ -126,6 +136,15 @@ a { color: white }
 
 .long_status b {
   color: #64e0ff;
+  display: block;
+}
+
+.long_status p {
+  margin: 0;
+}
+
+.plannedWorkDetail {
+  margin-bottom: 20px;
 }
 
 /* Responsive Header */
