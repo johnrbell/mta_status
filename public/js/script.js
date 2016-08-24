@@ -64,26 +64,16 @@
     }
   })
 
-  $('br').each(function(){
-    var _this = $(this);
-    if(_this.next().is('br')){
-      _this.remove();
-    }
-  });
+  /* To manipulate the awful HTML that the MTA API responds with */
+  var long_status = $('.long_status');
+  var planned_work_container = $('.plannedworkTableStyle');
 
-  //hides extra detail info on single train status reports
-  $('.plannedworkTableStyle').hide()
+  long_status.find('b + br').remove();
+  long_status.find('br + br').remove();
+  long_status.find('br + br + br').remove();
+  long_status.find('span + br').remove();
+  long_status.children('br:last-child').hide();
 
-  //removes extra br from the end of single train status reports
-  while ($('.longstatus').children().last().is('br')){
-    $('.longstatus').children().last().remove()
-  }
-
-  //if .longstatus is blank, hide it.
-  if($('.longstatus').text()){
-  }else{
-    $('.longstatus').hide()
-  }
-
+  planned_work_container.hide();
 
 })();
