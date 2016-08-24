@@ -1,6 +1,6 @@
 # MTAStatus
 
-![preview](http://i.imgur.com/DSTg1du.jpg)
+![preview](/public/og.png)
 
 # API Usage
 
