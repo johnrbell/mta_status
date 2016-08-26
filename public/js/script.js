@@ -3,7 +3,7 @@
 (function(){
   if ((/Android|iPhone|iPad|iPod|BlackBerry/i).test(navigator.userAgent || navigator.vendor || window.opera)) {
     window.onfocus = function(){
-      location.reload()
+      navigator.vibrate([500, 300, 100]);
     }
   }
   // Fix background image jump on mobile
