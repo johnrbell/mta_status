@@ -8,7 +8,7 @@ module ServiceStatus
   end
 
   def trains_data
-    service_status_data.xpath("//line")
+    trains_data = service_status_data.xpath("//line")
       .map { |line| parse_line(line) }
       .select { |line| train_lines.include? line[:name] }
   end
@@ -40,9 +40,24 @@ module ServiceStatus
   def parse_line(line, name = nil)
     {
       name: name || line.xpath("name").text,
-      status: line.xpath("status").text,
+      status: modify_status(line.xpath("status").text),
       long_status: filter_html(line.xpath("text").text)
     }
+  end
+
+  def modify_status(status)
+      case status 
+        when 'PLANNED WORK'
+          status = 'planned work.'
+        when 'SERVICE CHANGE'
+          status = 'service change.'
+        when 'DELAYS'
+          status = 'delayed <br> af.'
+        when 'GOOD SERVICE'
+          status = 'all good.'
+        else
+          status = 'probably screwed.'
+      end
   end
 
   module_function :train_data, :trains_data

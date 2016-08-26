@@ -43,27 +43,6 @@
     }
   })
 
-  // each to replace the MTA status text with my own status text. 
-  $.each($('.status'),function(){
-    switch($(this).text()) {
-      case 'PLANNED WORK':
-        $(this).text('planned work.')
-        break;
-      case 'SERVICE CHANGE':
-        $(this).text('service change.')
-        break;
-      case 'DELAYS':
-        $(this).html('delayed <br> af.')
-        break;
-      case 'GOOD SERVICE':
-        $(this).text('all good.')
-        break;
-      default:
-        $(this).text('probably fucked.')
-        break;
-    }
-  })
-
   /* To manipulate the awful HTML that the MTA API responds with */
   var long_status = $('.long_status');
   var planned_work_container = $('.plannedworkTableStyle');
