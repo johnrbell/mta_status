@@ -1,9 +1,6 @@
 "use strict";
 
 (function(){
-    window.onfocus = function(){
-      navigator.vibrate([500, 300, 100]);
-    }
   // Fix background image jump on mobile
   var $background = $('.bg, .screen');
   if ((/Android|iPhone|iPad|iPod|BlackBerry/i).test(navigator.userAgent || navigator.vendor || window.opera)) {
