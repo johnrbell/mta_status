@@ -1,7 +1,11 @@
 "use strict";
 
 (function(){
-
+  if ((/Android|iPhone|iPad|iPod|BlackBerry/i).test(navigator.userAgent || navigator.vendor || window.opera)) {
+    window.onfocus = function(){
+      location.reload()
+    }
+  }
   // Fix background image jump on mobile
   var $background = $('.bg, .screen');
   if ((/Android|iPhone|iPad|iPod|BlackBerry/i).test(navigator.userAgent || navigator.vendor || window.opera)) {
