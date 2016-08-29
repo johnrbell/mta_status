@@ -45,19 +45,18 @@ module ServiceStatus
     }
   end
 
+  def status_string_map
+    {
+      "PLANNED WORK": "planned work.",
+      "SERVICE CHANGE": "service change.",
+      "DELAYS": "delayed <br> af.",
+      "GOOD SERVICE": "all good.",
+      "DEFAULT": "probably screwed."
+    }
+  end
+
   def modify_status(status)
-      case status 
-        when 'PLANNED WORK'
-          status = 'planned work.'
-        when 'SERVICE CHANGE'
-          status = 'service change.'
-        when 'DELAYS'
-          status = 'delayed <br> af.'
-        when 'GOOD SERVICE'
-          status = 'all good.'
-        else
-          status = 'probably screwed.'
-      end
+    status_string_map[status.to_sym] || status_string_map[:DEFAULT]
   end
 
   module_function :train_data, :trains_data
