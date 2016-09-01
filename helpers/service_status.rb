@@ -47,11 +47,11 @@ module ServiceStatus
 
   def status_string_map
     {
-      "PLANNED WORK"=> "planned work.",
-      "SERVICE CHANGE"=> "service change.",
-      "DELAYS"=> "delayed <br> af.",
-      "GOOD SERVICE"=> "all good.",
-      "DEFAULT"=> "probably screwed."
+      "PLANNED WORK": "planned work.",
+      "SERVICE CHANGE": "service change.",
+      "DELAYS": "delayed <br> af.",
+      "GOOD SERVICE": "all good.",
+      "DEFAULT": "probably screwed."
     }
   end
 
