@@ -13,7 +13,7 @@ module GetBGImage
 
   def check_for_cached(file)
     old_time = file.gsub!('./public/img/bg/','').gsub!('.jpg','').to_i
-    Time.now.to_i-old_time < 300 ? true : false
+    Time.now.to_i-old_time < 300
   end
 
   def newest_image
