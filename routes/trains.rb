@@ -10,6 +10,7 @@ class MtaStatus < Sinatra::Base
     return invalid_train unless valid_train? train
 
     @train = train_data(train)
+    @bg_img = get_bg_img
     erb :"trains/show"
   end
 
