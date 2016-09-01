@@ -21,9 +21,11 @@ html, body {
   height:100%;
   width: 100%;
   background-color: #333;
-  background: url(https://source.unsplash.com/category/buildings/1600x1200/?new+york);
+  /* background: url is set by helper method and erb'ed into html */
+  /* background: url(https://source.unsplash.com/category/buildings/1600x1200/?new+york); */
   background-size: cover;
-  background-position: center;
+  background-position: center center;
+  background-repeat: no-repeat;
   z-index: -1;
   top: 0;
   position: fixed;

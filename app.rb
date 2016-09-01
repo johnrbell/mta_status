@@ -14,5 +14,7 @@ end
 require_relative "helpers/service_status"
 require_relative "routes/trains"
 require_relative "routes/api/trains"
+require_relative "helpers/get_bg_image"
 
+MtaStatus.helpers GetBGImage
 MtaStatus.helpers ServiceStatus
