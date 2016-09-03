@@ -98,6 +98,8 @@ html, body {
 
 a { color: white }
 
+.for_desktop { display: none; }
+
 /* Long Status Information */
 .long_status {
   text-align: left;
@@ -150,7 +152,30 @@ a { color: white }
 }
 
 /* Responsive Header */
-@media (min-width: 800px) {
-  .header h1 { font-size: 90px }
-  .header h2 { font-size: 30px }
+@media (min-width: 890px){
+
+  .header h1 { font-size: 120px }
+  .header h2 { font-size: 40px }
+  
+  .trainname {
+    width: 75px;
+    height: 75px;
+    margin: 0 20px 75px 20px;
+  }
+
+  .letter {
+    width: 75px;
+    font-size: 52px;
+  }
+
+  .status {
+    font-size: 20px;
+    height: 20px;
+    padding-top: 82px;
+    width: 120px;
+    margin-left: -20px;
+    text-align: center;
+  }
+
+  .for_desktop { display: block; } 
 }

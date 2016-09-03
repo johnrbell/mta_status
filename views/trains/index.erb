@@ -1,5 +1,8 @@
 <% @trains.each do |line, status, long_status| %>
   <% line[:name].split("").each do |name| %>
+  <% if name == "A" || name == "G" %>
+  <br class="for_desktop"/>
+  <% end %>
     <div class="trainname">
       <a href="<%= name %>">
         <div class="letter" id="<%= name.downcase %>"><%= name %></div>
