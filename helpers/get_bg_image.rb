@@ -15,7 +15,6 @@ module GetBGImage
     return unless file = newest_image
 
     old_time = file.gsub(/\.\/public\/img\/bg\/|\.jpg/, "").to_i
-    binding.pry
     Time.now.to_i - old_time < 300
   end
 
