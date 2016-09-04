@@ -1,4 +1,4 @@
-module GetBGImage 
+module GetBGImage
   IMG_API_URL = "https://source.unsplash.com/category/buildings/1600x1200/?new+york".freeze
 
   def get_bg_img
@@ -12,8 +12,11 @@ module GetBGImage
   private
 
   def check_for_cached(file)
-    old_time = file.gsub!('./public/img/bg/','').gsub!('.jpg','').to_i
-    Time.now.to_i-old_time < 300
+    puts 'Checking for cached file: ' + file
+    return unless file
+
+    old_time = file.gsub('./public/img/bg/','').gsub('.jpg','').to_i
+    Time.now.to_i - old_time < 300
   end
 
   def newest_image
