@@ -14,7 +14,7 @@ module GetBGImage
   def cached_image_exists?
     return unless file = newest_image
 
-    old_time = file.gsub("./public/img/bg/", "").gsub(".jpg", "").to_i
+    old_time = file.gsub(/\.\/public\/img\/bg\/|\.jpg/, "").to_i
     Time.now.to_i - old_time < 300
   end
 
