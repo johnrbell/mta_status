@@ -15,6 +15,7 @@ module GetBGImage
     return unless file = newest_image
 
     old_time = file.gsub(/\.\/public\/img\/bg\/|\.jpg/, "").to_i
+    binding.pry
     Time.now.to_i - old_time < 300
   end
 
@@ -24,11 +25,14 @@ module GetBGImage
 
   def fetch_external_img
     begin
-      File.delete(newest_image)
+      File.delete(newest_image) if newest_image
+
       download = open(IMG_API_URL)
       IO.copy_stream(download, "public/img/bg/" + build_filename)
+
       newest_image.gsub!("./public", "")
-    rescue #if download of external fails:
+    rescue => e
+      p e.backtrace
       default_images.sample
     end
   end
