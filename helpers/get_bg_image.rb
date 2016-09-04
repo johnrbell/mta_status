@@ -1,9 +1,9 @@
-module GetBGImage 
+module GetBGImage
   IMG_API_URL = "https://source.unsplash.com/category/buildings/1600x1200/?new+york".freeze
 
   def get_bg_img
-    if check_for_cached(newest_image)
-      newest_image.gsub!('./public','')
+    if cached_image_exists?
+      newest_image.gsub("./public", "")
     else
       fetch_external_img
     end
@@ -11,9 +11,11 @@ module GetBGImage
 
   private
 
-  def check_for_cached(file)
-    old_time = file.gsub!('./public/img/bg/','').gsub!('.jpg','').to_i
-    Time.now.to_i-old_time < 300
+  def cached_image_exists?
+    return unless file = newest_image
+
+    old_time = file.gsub(/\.\/public\/img\/bg\/|\.jpg/, "").to_i
+    Time.now.to_i - old_time < 300
   end
 
   def newest_image
@@ -22,17 +24,20 @@ module GetBGImage
 
   def fetch_external_img
     begin
-      File.delete(newest_image)  
+      File.delete(newest_image) if newest_image
+
       download = open(IMG_API_URL)
-      IO.copy_stream(download, 'public/img/bg/'+build_filename)
-      newest_image.gsub!('./public','')
-    rescue #if download of external fails: 
-      default_images.sample 
+      IO.copy_stream(download, "public/img/bg/" + build_filename)
+
+      newest_image.gsub!("./public", "")
+    rescue => e
+      p e.backtrace
+      default_images.sample
     end
   end
 
   def build_filename
-    Time.now.to_i.to_s+".jpg"
+    Time.now.to_i.to_s + ".jpg"
   end
 
   # TODO: save locally 
