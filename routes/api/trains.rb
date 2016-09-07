@@ -1,7 +1,7 @@
 class MtaStatus < Sinatra::Base
   namespace "/api" do
     get "/trains" do
-      trains_data.to_json
+      format_api_data(trains_data).to_json
     end
 
     get "/trains/:name" do
