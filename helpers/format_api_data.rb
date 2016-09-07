@@ -1,7 +1,7 @@
 module FormatApiData
-
+  # this method takes the trains array where each line has an array of trains
+  # and returns a new array where each train has it's own hash
   def format_api_data(trains_data)
-
     trains_data.inject([]) do |prev, curr|
       curr[:name].split("").each do |train|
         prev.push({
@@ -12,17 +12,6 @@ module FormatApiData
       end
       prev
     end
-    # formatted_data = []
-    # trains_data.each do |line|
-    #   line[:name].split("").each do |train|
-    #     formatted_data.push({
-    #       :name => train,
-    #       :status => line[:status],
-    #       :long_status => line[:long_status]
-    #     })
-    #   end
-    # end
-    #formatted_data
   end
 
 end
