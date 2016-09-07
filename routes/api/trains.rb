@@ -1,7 +1,18 @@
 class MtaStatus < Sinatra::Base
   namespace "/api" do
     get "/trains" do
-      trains_data.to_json
+      new_data = []
+      trains_data.each do |line|
+      	line[:name].split("").each do |train|
+      		new_data.push({
+      			:name => train,
+      			:status => line[:status],
+      			:long_status => line[:long_status]
+      		})
+      	end
+      end
+      new_data.to_json
+      #trains_data.to_json
     end
 
     get "/trains/:name" do
