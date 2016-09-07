@@ -63,9 +63,9 @@ html, body {
 /* Train Information */
 .container {
   position: relative;
-  max-width: 900px;
+  max-width: 1200px;
   text-align: center;
-  margin: 60px auto 0 auto;
+  margin: 40px auto 0 auto;
 }
 
 .trainname {
