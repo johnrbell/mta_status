@@ -32,6 +32,23 @@ html, body {
   text-align: center;
 }
 
+/* Donate button */
+.donate{
+  z-index: 99;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  height: 60px;
+  width: 60px;
+  background-color: #666;
+  background-image: url(/img/beer.png);
+  background-size: contain;
+  background-position: 3px;
+  background-repeat: no-repeat;
+  border-top-left-radius:  20px;
+}
+
+
 /* Header */
 .header {
   text-align: center;
