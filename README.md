@@ -1,4 +1,3 @@
-![icon](/public/img/icons/apple-icon-72x72.png)
 # MTAStatus 
 
 ![preview](/public/og.png)
@@ -24,3 +23,5 @@ E.g.,
   https://calewagnerdesign.myportfolio.com/
   
   calewagnerdesign@gmail.com
+  
+  ![icon](/public/img/icons/apple-icon-72x72.png)
