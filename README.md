@@ -17,7 +17,7 @@ E.g.,
 `http://mtastat.us/api/trains/F`
 
 
-# Contributors: 
+# Contributors (non-code)
 
 ### Android/iOS/Favicon Design: 
   https://calewagnerdesign.myportfolio.com/
