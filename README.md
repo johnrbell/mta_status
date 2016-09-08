@@ -15,3 +15,11 @@ GET "api/trains/:train-name"
 E.g.,
 
 `http://mtastat.us/api/trains/F`
+
+
+# Contributors: 
+
+### Android/iOS/Favicon Design: 
+  https://calewagnerdesign.myportfolio.com/
+  
+  calewagnerdesign@gmail.com
