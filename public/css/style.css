@@ -35,12 +35,12 @@ html, body {
 /* Donate button */
 .donate{
   z-index: 99;
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   right: 0px;
   height: 60px;
   width: 60px;
-  background-color: #666;
+  background-color: #BBB;
   background-image: url(/img/beer.png);
   background-size: contain;
   background-position: 3px;
