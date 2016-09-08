@@ -1,4 +1,4 @@
-# MTAStatus
+# MTAStatus ![icon](/public/img/icons/apple-icon.png)
 
 ![preview](/public/og.png)
 
