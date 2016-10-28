@@ -100,6 +100,7 @@ html, body {
   background-color: transparent;
   padding-top: 4px;
   font-weight: bold;
+  line-height: 1.2;
 }
 
 .status {
@@ -183,6 +184,7 @@ a { color: white }
   .letter {
     width: 75px;
     font-size: 52px;
+    line-height: normal;
   }
 
   .status {
