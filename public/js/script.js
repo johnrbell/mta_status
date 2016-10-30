@@ -54,4 +54,15 @@
 
   planned_work_container.hide();
 
+  /* Prevent default behavior of links. This allows the app to stay internal
+   * when added to the homescreen on iOS */
+
+  $('a').on('click', function(e){
+    var link = $(this).attr('href');
+    if(link.indexOf(location.hostname) === -1){
+      e.preventDefault();
+      window.location = link;
+    }
+  });
+
 })();
