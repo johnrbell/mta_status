@@ -10,6 +10,10 @@ class MtaStatus < Sinatra::Base
       train_data(train).to_json
     end
 
+    get "/get_bg" do
+      send_file File.join(settings.public_folder, get_bg_img)
+    end
+
     private
 
     def invalid_train
