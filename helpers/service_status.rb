@@ -20,7 +20,7 @@ module ServiceStatus
   end
 
   def train_lines
-    %w(123 456 7 ACE BDFM G JZ L NQR S)
+    %w(123 456 7 ACE BDFM G JZ L NQRW S)
   end
 
   def valid_train?(train)
