@@ -1,7 +1,6 @@
 class MtaStatus < Sinatra::Base
   get "/" do
     @trains = trains_data
-    binding.pry
     @bg_img = get_bg_img
     erb :"trains/index"
   end
