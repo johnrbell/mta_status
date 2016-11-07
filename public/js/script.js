@@ -35,7 +35,7 @@
       case 'L':  case 'S':
           $(this).css('background-color','#999999')
           break;
-      case 'N':  case 'Q':  case 'R':
+      case 'N':  case 'Q':  case 'R':  case 'W':
           $(this).css('background-color','#FFD900'),
           $(this).children('a').css('color','black')
           break;
