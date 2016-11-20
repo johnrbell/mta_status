@@ -51,4 +51,11 @@ describe "Trains API" do
       end
     end
   end
+
+  describe "GET /get_bg" do 
+    it "responds with a 200" do
+      get "/api/get_bg"
+      expect(last_response.status).to eq 200
+    end
+  end
 end
