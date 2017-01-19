@@ -1,4 +1,7 @@
 class MtaStatus < Sinatra::Base
+  register Sinatra::CrossOrigin
+  enable :cross_origin
+    
   namespace "/api" do
     get "/trains" do
       format_api_data(trains_data).to_json
