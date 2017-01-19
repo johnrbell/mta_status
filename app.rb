@@ -5,6 +5,11 @@ require "pry"
 require "sinatra"
 require "sinatra/namespace"
 require "sinatra/reloader"
+require 'sinatra/cross_origin'
+
+configure do
+  enable :cross_origin
+end
 
 class MtaStatus < Sinatra::Base
   set :root, File.dirname(__FILE__)
