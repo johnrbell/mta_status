@@ -5,7 +5,6 @@ require "pry"
 require "sinatra"
 require "sinatra/namespace"
 require "sinatra/reloader"
-require 'sinatra'
 require 'sinatra/cross_origin'
 
 configure do
