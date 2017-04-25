@@ -20,7 +20,7 @@ module ServiceStatus
   end
 
   def train_lines
-    %w(123 456 7 ACE BDFM G JZ L NQRW S)
+    %w(123 456 7 ACE BDFM G JZ L NQR W S)
   end
 
   def valid_train?(train)
@@ -38,6 +38,7 @@ module ServiceStatus
   end
 
   def parse_line(line, name = nil)
+    puts line
     {
       name: name || line.xpath("name").text,
       status: modify_status(line.xpath("status").text),
