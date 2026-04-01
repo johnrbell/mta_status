@@ -65,11 +65,23 @@ exports.processAlerts = function(feedData) {
     })
     if (!active) return
 
+    //extract description text (plain english)
+    let headerText = ''
+    if (alert.header_text && alert.header_text.translation) {
+      let en = alert.header_text.translation.find(t => t.language === 'en')
+      if (en) headerText = en.text
+    }
+    let createdAt = mercury.created_at ? new Date(mercury.created_at * 1000) : null
+
     //map to affected routes
     ;(alert.informed_entity || []).forEach(ie => {
       if (ie.route_id && allRoutes.includes(ie.route_id)) {
         if (!routeAlerts[ie.route_id]) routeAlerts[ie.route_id] = []
-        routeAlerts[ie.route_id].push(alertType)
+        routeAlerts[ie.route_id].push({
+          type: alertType,
+          description: headerText,
+          createdAt: createdAt
+        })
       }
     })
   })
@@ -77,16 +89,17 @@ exports.processAlerts = function(feedData) {
   //build sorted train array
   let trains = []
   allRoutes.forEach(route => {
-    let alerts = routeAlerts[route]
+    let alerts = routeAlerts[route] || []
     let status
-    if (alerts && alerts.length > 0) {
-      status = mapStatus(pickWorstStatus(alerts))
+    if (alerts.length > 0) {
+      status = mapStatus(pickWorstStatus(alerts.map(a => a.type)))
     } else {
       status = "all good."
     }
     trains[sortOrder[route]] = {
       route: route,
-      statusDetails: { statusSummary: status }
+      statusDetails: { statusSummary: status },
+      alerts: alerts
     }
   })
 
