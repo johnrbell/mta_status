@@ -18,6 +18,10 @@ const defaultImages = [
 	'https://images.unsplash.com/photo-1464225495945-af130cc9f19e?w=1600&h=1200&fit=crop'
 ];
 
+function randomDefault() {
+	return defaultImages[Math.floor(Math.random() * defaultImages.length)];
+}
+
 function newestImage() {
 	if (!fs.existsSync(BG_DIR)) {
 		fs.mkdirSync(BG_DIR, { recursive: true });
@@ -36,15 +40,24 @@ function cachedImageFresh() {
 	return Date.now() / 1000 - timestamp < CACHE_TTL;
 }
 
+let memoryCache = { url: null, timestamp: 0 };
+
 export async function getBgImg() {
-	if (cachedImageFresh()) {
-		return '/img/bg/' + newestImage();
+	// Try disk cache first (works locally, not on Vercel)
+	try {
+		if (cachedImageFresh()) {
+			return '/img/bg/' + newestImage();
+		}
+	} catch {
+		// Filesystem not available (e.g. Vercel), fall through to in-memory + Unsplash
+	}
+
+	// In-memory cache for serverless environments
+	if (memoryCache.url && Date.now() / 1000 - memoryCache.timestamp < CACHE_TTL) {
+		return memoryCache.url;
 	}
 
 	try {
-		const old = newestImage();
-		if (old) fs.unlinkSync(path.join(BG_DIR, old));
-
 		const unsplashKey = env.UNSPLASH_ACCESS_KEY;
 		if (!unsplashKey) throw new Error('No Unsplash key');
 
@@ -61,14 +74,27 @@ export async function getBgImg() {
 		const data = await searchRes.json();
 		const imgUrl = data.urls.regular;
 
-		const imgRes = await fetch(imgUrl);
-		if (!imgRes.ok) throw new Error('Image download failed');
-		const buffer = Buffer.from(await imgRes.arrayBuffer());
-		const filename = Math.floor(Date.now() / 1000) + '.jpg';
-		fs.writeFileSync(path.join(BG_DIR, filename), buffer);
-		return '/img/bg/' + filename;
+		// Try disk cache write
+		try {
+			const old = newestImage();
+			if (old) fs.unlinkSync(path.join(BG_DIR, old));
+			const filename = Math.floor(Date.now() / 1000) + '.jpg';
+			const imgRes = await fetch(imgUrl);
+			if (imgRes.ok) {
+				const buffer = Buffer.from(await imgRes.arrayBuffer());
+				fs.writeFileSync(path.join(BG_DIR, filename), buffer);
+				return '/img/bg/' + filename;
+			}
+		} catch {
+			// Disk write failed, use URL directly
+		}
+
+		memoryCache = { url: imgUrl, timestamp: Date.now() / 1000 };
+		return imgUrl;
 	} catch (err) {
 		console.log('BG image error:', err.message);
-		return defaultImages[Math.floor(Math.random() * defaultImages.length)];
+		const url = randomDefault();
+		memoryCache = { url, timestamp: Date.now() / 1000 };
+		return url;
 	}
 }
