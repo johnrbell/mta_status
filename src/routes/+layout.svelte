@@ -30,7 +30,13 @@
 
 {#if loading}
 	<div class="loader-overlay">
-		<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
+		<div class="loader-ring">
+			<svg class="loader-svg" viewBox="0 0 100 100">
+				<circle class="loader-track" cx="50" cy="50" r="46" />
+				<circle class="loader-progress" cx="50" cy="50" r="46" />
+			</svg>
+			<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
+		</div>
 	</div>
 {/if}
 
@@ -119,16 +125,48 @@
 		align-items: center;
 	}
 
-	.loader-icon {
-		width: 80px;
-		height: 80px;
-		border-radius: 50%;
-		animation: spin 0.8s ease-in-out infinite;
+	.loader-ring {
+		position: relative;
+		width: 96px;
+		height: 96px;
 	}
 
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+	.loader-svg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		transform: rotate(-90deg);
+	}
+
+	.loader-track {
+		fill: none;
+		stroke: rgba(255, 255, 255, 0.15);
+		stroke-width: 4;
+	}
+
+	.loader-progress {
+		fill: none;
+		stroke: #FF8844;
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-dasharray: 289;
+		stroke-dashoffset: 289;
+		animation: wrap 0.25s linear forwards;
+	}
+
+	@keyframes wrap {
+		to { stroke-dashoffset: 0; }
+	}
+
+	.loader-icon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 76px;
+		height: 76px;
+		border-radius: 50%;
 	}
 
 	@media (min-width: 890px) {
