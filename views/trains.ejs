@@ -5,6 +5,30 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#333333"/>
+  <meta property="og:title" content="MTA Status" />
+  <meta property="og:site_name" content="MTA Status" />
+  <meta property="og:description" content="Subway status, at a glance." />
+  <meta property="og:type" content="website" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MTA Status">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="msapplication-TileImage" content="/img/icons/ms-icon-144x144.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/x-icon" href="/img/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/img/icons/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="/img/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/img/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/img/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/img/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/img/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/img/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/img/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/icons/apple-icon-180x180.png">
 </head>
 <body>
   <div class="header">
@@ -18,7 +42,10 @@
           <% if (train.route === 'A' || train.route === 'G') { %>
             <br class="for_desktop"/>
           <% } %>
-          <div class="trainname" id="<%= train.route.toLowerCase() %>">
+          <div class="trainname<%= (train.alerts && train.alerts.length > 0) ? ' has-alerts' : '' %>" id="<%= train.route.toLowerCase() %>"
+               <% if (train.alerts && train.alerts.length > 0) { %>
+               data-route="<%= train.route %>"
+               <% } %>>
             <div class="letter"><%= train.route %></div>
             <div class="status"><%= train.statusDetails.statusSummary %></div>
           </div>
@@ -26,7 +53,91 @@
       <% }) %>
     <% } %>
   </div>
+  <div class="hint">click a train for more info</div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title"></span>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
   <div class="bg" style="background-image: url(<%= bgImg %>)"></div>
   <div class="screen"></div>
+
+  <script>
+    var alertData = <%- JSON.stringify(
+      (data ? data.trains : []).reduce(function(acc, train) {
+        if (train && train.alerts && train.alerts.length > 0) {
+          acc[train.route] = train.alerts.map(function(a) {
+            return {
+              type: a.type,
+              description: a.description,
+              createdAt: a.createdAt
+            };
+          });
+        }
+        return acc;
+      }, {})
+    ) %>;
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      var d = new Date(dateStr);
+      var month = ('0' + (d.getMonth()+1)).slice(-2);
+      var day = ('0' + d.getDate()).slice(-2);
+      var year = d.getFullYear();
+      var hours = d.getHours();
+      var minutes = ('0' + d.getMinutes()).slice(-2);
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+    }
+
+    function openModal(route) {
+      var alerts = alertData[route];
+      if (!alerts || alerts.length === 0) return;
+
+      document.getElementById('modal-title').innerHTML = 'Active Alerts for <span class="modal-route-circle" id="modal-circle">' + route + '</span>';
+
+      var html = '';
+      alerts.forEach(function(a) {
+        html += '<div class="modal-alert">';
+        html += '<div class="modal-alert-type">' + a.type + '</div>';
+        html += '<div class="modal-alert-desc">' + a.description + '</div>';
+        if (a.createdAt) {
+          html += '<div class="modal-alert-date">Posted: ' + formatDate(a.createdAt) + '</div>';
+        }
+        html += '</div>';
+      });
+      document.getElementById('modal-body').innerHTML = html;
+
+      // color the circle
+      var circle = document.getElementById('modal-circle');
+      var trainEl = document.getElementById(route.toLowerCase());
+      if (trainEl && circle) {
+        circle.style.backgroundColor = window.getComputedStyle(trainEl).backgroundColor;
+      }
+
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    document.querySelectorAll('.has-alerts').forEach(function(el) {
+      var route = el.getAttribute('data-route');
+      el.addEventListener('click', function() { openModal(route); });
+    });
+  </script>
 </body>
 </html>
