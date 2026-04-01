@@ -5,6 +5,7 @@ var path = require('path')
 var globalTrains = {}
 
 const mtaURL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json'
+const unsplashKey = process.env.UNSPLASH_ACCESS_KEY
 const bgDir = path.join(__dirname, '..', 'public', 'img', 'bg')
 const bgCacheTTL = 300 //seconds
 
@@ -47,8 +48,12 @@ async function getBgImg() {
     let old = newestImage()
     if (old) fs.unlinkSync(path.join(bgDir, old))
 
-    let url = defaultImages[Math.floor(Math.random() * defaultImages.length)]
-    let response = await axios.get(url, { responseType: 'arraybuffer' })
+    let searchRes = await axios.get('https://api.unsplash.com/photos/random', {
+      params: { query: 'new york city buildings', orientation: 'landscape', w: 1600, h: 1200 },
+      headers: { Authorization: 'Client-ID ' + unsplashKey }
+    })
+    let imgUrl = searchRes.data.urls.regular
+    let response = await axios.get(imgUrl, { responseType: 'arraybuffer' })
     let filename = Math.floor(Date.now() / 1000) + '.jpg'
     fs.writeFileSync(path.join(bgDir, filename), response.data)
     return '/img/bg/' + filename
