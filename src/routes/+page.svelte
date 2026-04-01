@@ -125,9 +125,10 @@
 	.letter {
 		width: 50px;
 		font-size: 35px;
+		font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+		font-weight: 500;
 		background-color: transparent;
 		padding-top: 4px;
-		font-weight: bold;
 		line-height: 1.2;
 		text-align: center;
 	}

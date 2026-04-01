@@ -32,13 +32,13 @@ function mapStatus(status) {
 	if (status.startsWith('Planned')) return 'planned work.';
 	switch (status) {
 		case 'Severe Delays':
-			return 'delayed af.';
+			return 'trains cooked.';
 		case 'Delays':
-			return 'delayed af.';
+			return 'trains cooked.';
 		case 'Slow Speeds':
-			return 'slow af.';
+			return 'sorta cooked.';
 		case 'Reduced Service':
-			return 'reduced service.';
+			return 'sorta cooked.';
 		case 'No Scheduled Service':
 			return 'no service.';
 		case 'Boarding Change':
