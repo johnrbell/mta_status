@@ -151,7 +151,7 @@
 		font-size: 15px;
 		color: rgba(255, 255, 255, 0.83);
 		margin: 10px auto 0 auto;
-		font-weight: lighter;
+		font-weight: 400;
 		background: rgba(0, 0, 0, 0.55);
 		padding: 6px 16px;
 		border-radius: 20px;
