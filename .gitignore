@@ -1,3 +1,5 @@
 node_modules/
-public/img/bg/
 .env
+/build
+/.svelte-kit
+static/img/bg/

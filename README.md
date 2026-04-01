@@ -23,6 +23,15 @@ A JavaScript rewrite of [mta_status](https://github.com/johnrbell/mta_status) (R
 
 ```bash
 npm install
+npm run dev
+```
+
+Runs on [http://localhost:5173](http://localhost:5173).
+
+For production:
+
+```bash
+npm run build
 npm start
 ```
 
@@ -30,6 +39,6 @@ Runs on [http://localhost:3000](http://localhost:3000).
 
 ## Stack
 
-- **Server:** Express, EJS
+- **Framework:** SvelteKit (Svelte 5)
 - **Data:** MTA GTFS-RT JSON feed (no API key required)
-- **HTTP:** Axios
+- **Adapter:** adapter-node (standalone Node.js server)
