@@ -1,4 +1,117 @@
-.hidden{
-  visibility: hidden;
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: "Helvetica Neue", "Arial";
+  color: white;
 }
-.train{}
+
+.screen {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  background-color: #222;
+  opacity: .7;
+  position: fixed;
+  z-index: -1;
+}
+
+.bg {
+  height: 100%;
+  width: 100%;
+  background-color: #333;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: -2;
+  top: 0;
+  position: fixed;
+  text-align: center;
+}
+
+.header {
+  text-align: center;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.header h1 {
+  padding-top: 10px;
+  font-size: 14vw;
+  line-height: 0px;
+  font-weight: lighter;
+}
+
+.header h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.header h2 {
+  font-size: 7.5vw;
+  line-height: 15px;
+  font-weight: lighter;
+}
+
+.container {
+  position: relative;
+  max-width: 1200px;
+  text-align: center;
+  margin: 40px auto 0 auto;
+}
+
+.trainname {
+  display: inline-block;
+  vertical-align: top;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 10px 50px 10px;
+  position: relative;
+}
+
+.letter {
+  width: 50px;
+  font-size: 35px;
+  background-color: transparent;
+  padding-top: 4px;
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.status {
+  font-size: 14px;
+  color: #fff;
+  padding-top: 5px;
+  width: 80px;
+  margin-left: -15px;
+  text-align: center;
+}
+
+a { color: white; }
+
+.for_desktop { display: none; }
+
+/* MTA line colors on .trainname */
+#\31 , #\32 , #\33  { background-color: #EE352E; }
+#\34 , #\35 , #\36  { background-color: #00933C; }
+#\37  { background-color: #B933AD; }
+#a, #c, #e { background-color: #0039A6; }
+#b, #d, #f, #m { background-color: #FF6319; }
+#g { background-color: #6CBE45; }
+#j, #z { background-color: #996633; }
+#l { background-color: #A7A9AC; }
+#n, #q, #r, #w { background-color: #FCCC0A; }
+#s { background-color: #808183; }
+
+@media (min-width: 890px) {
+  .header h1 { font-size: 120px; }
+  .header h2 { font-size: 40px; }
+  .trainname { width: 75px; height: 75px; margin: 0 20px 75px 20px; }
+  .letter { width: 75px; font-size: 52px; line-height: normal; }
+  .status { font-size: 20px; padding-top: 7px; width: 120px; margin-left: -20px; text-align: center; }
+  .for_desktop { display: block; }
+}

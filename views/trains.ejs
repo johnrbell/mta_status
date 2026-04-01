@@ -1,40 +1,32 @@
-<link rel='stylesheet' type='text/css' href='css/style.css'>
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-  <title></title>
+  <title>MTA Status</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#333333"/>
 </head>
 <body>
-
-  <div id='train_container'>
+  <div class="header">
+    <h1><a href="/">MTA STATUS</a></h1>
+    <h2>Subway, at a glance.</h2>
+  </div>
+  <div class="container">
     <% if (data) { %>
-    (cached)
-      <% data.trains.forEach(train => { %>
-
-      <div class='train'>
-        <div id='<%= train.route %>' class='circle'><%= train.route %></div>
-        <div id='status'><%= train.statusDetails.statusSummary    %></div>
-      </div>
-
+      <% data.trains.forEach(function(train) { %>
+        <% if (train) { %>
+          <% if (train.route === 'A' || train.route === 'G') { %>
+            <br class="for_desktop"/>
+          <% } %>
+          <div class="trainname" id="<%= train.route.toLowerCase() %>">
+            <div class="letter"><%= train.route %></div>
+            <div class="status"><%= train.statusDetails.statusSummary %></div>
+          </div>
+        <% } %>
       <% }) %>
-
     <% } %>
   </div>
-  <% if (token) { %>
-    <div class='hidden' id='token'><%= token %></div>
-  <% } %>
-
+  <div class="bg" style="background-image: url(<%= bgImg %>)"></div>
+  <div class="screen"></div>
 </body>
 </html>
-
-
-<script
-  src='https://code.jquery.com/jquery-3.4.1.min.js'
-  integrity='sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo='
-  crossorigin='anonymous'></script>
-<% if (token) { %>
-  <script type='text/javascript' src='js/script.js'></script>
-<% } %>
-
-
-
