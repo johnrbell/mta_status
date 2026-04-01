@@ -3,4 +3,6 @@ module.exports = function(app) {
 	app.route('/')
 		.get(controller.get_trains)
     .post(controller.post_trains)
+	app.route('/:name')
+		.get(controller.get_train)
 }

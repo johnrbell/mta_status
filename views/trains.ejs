@@ -138,6 +138,17 @@
       var route = el.getAttribute('data-route');
       el.addEventListener('click', function() { openModal(route); });
     });
+
+    // iOS homescreen: keep links inside PWA shell
+    document.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        var link = a.getAttribute('href');
+        if (link && link.indexOf(location.hostname) === -1 && !link.startsWith('http')) {
+          e.preventDefault();
+          window.location = link;
+        }
+      });
+    });
   </script>
 </body>
 </html>

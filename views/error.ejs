@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <title>MTA Status</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#333333"/>
+</head>
+<body>
+  <div class="header">
+    <h1><a href="/">MTA STATUS</a></h1>
+    <h2>Subway, at a glance.</h2>
+  </div>
+  <div class="container">
+    <p class="error-msg">Sorry, <em><%= name %></em> is not a valid NYC Subway line!</p>
+    <a href="/" class="error-link">back to all trains</a>
+  </div>
+  <div class="bg" style="background-image: url(<%= bgImg %>)"></div>
+  <div class="screen"></div>
+</body>
+</html>

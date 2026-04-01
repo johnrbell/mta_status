@@ -87,6 +87,19 @@ exports.get_trains = async (req,res) => {
   }
 }
 
+const validTrains = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','S']
+
+//individual train route
+exports.get_train = async (req,res) => {
+  let name = req.params.name.toUpperCase()
+  if (validTrains.includes(name)) {
+    res.redirect('/')
+  } else {
+    let bgImg = await getBgImg()
+    res.status(404).render('error', {name: req.params.name, bgImg: bgImg})
+  }
+}
+
 //keep post route for backward compat
 exports.post_trains = (req,res) => {
   res.redirect('/')
