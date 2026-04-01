@@ -2,7 +2,7 @@
 
 NYC subway status, at a glance.
 
-A JavaScript rewrite of [mta_status](https://github.com/johnrbell/mta_status) (Ruby/Sinatra).
+A JavaScript (svelte) rewrite of [mta_status](https://github.com/johnrbell/mta_status) (Ruby/Sinatra).
 
 <p align="center">
   <img src="readme.png" alt="MTA Status" width="300">
