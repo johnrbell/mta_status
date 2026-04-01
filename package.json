@@ -1,29 +1,25 @@
 {
   "name": "mta_status_js",
-  "version": "1.0.0",
-  "description": "🚇 Messing with MTA XML data, but with JS this time",
-  "main": "helper.js",
+  "version": "2.0.0",
+  "description": "MTA Subway Status - rebuilt with SvelteKit",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node build/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/johnrbell/mta_status_js.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/johnrbell/mta_status_js/issues"
-  },
-  "homepage": "https://github.com/johnrbell/mta_status_js#readme",
-  "dependencies": {
-    "axios": "^1.14.0",
-    "body-parser": "^2.2.2",
-    "dotenv": "^17.3.1",
-    "ejs": "^5.0.1",
-    "express": "^5.2.1"
+  "devDependencies": {
+    "@sveltejs/adapter-node": "^5.2.12",
+    "@sveltejs/kit": "^2.21.1",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "svelte": "^5.28.2",
+    "vite": "^6.3.1"
   }
 }
