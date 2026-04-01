@@ -1,67 +1,97 @@
-exports.genToken = () => {
-  // generate random token for post
-	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+//severity ranking - higher = worse
+const severityOrder = [
+  'No Scheduled Service',
+  'Station Notice',
+  'Boarding Change',
+  'Special Schedule',
+  'Extra Service',
+  'Planned - Stops Skipped',
+  'Planned - Express to Local',
+  'Planned - Reroute',
+  'Planned - Part Suspended',
+  'Planned - Suspended',
+  'Reduced Service',
+  'Slow Speeds',
+  'Delays',
+  'Severe Delays'
+]
+
+function pickWorstStatus(types) {
+  let worst = types[0]
+  let worstIndex = severityOrder.indexOf(worst)
+  types.forEach(t => {
+    let idx = severityOrder.indexOf(t)
+    if (idx > worstIndex) { worst = t; worstIndex = idx }
+  })
+  return worst
 }
 
-exports.processRes = trains => {
-  //adds time to compare for caching
-  addCacheInfo = trains => {
-    trainObj = {}
-    trainObj.trains = trains
-    trainObj.cacheTime = new Date
-    return trainObj
+function mapStatus(status) {
+  if (status.startsWith('Planned')) return "planned work."
+  switch (status) {
+    case 'Severe Delays': return "delayed af."
+    case 'Delays': return "delayed af."
+    case 'Slow Speeds': return "slow af."
+    case 'Reduced Service': return "reduced service."
+    case 'No Scheduled Service': return "no service."
+    case 'Boarding Change': return "boarding change."
+    case 'Extra Service': return "extra service."
+    case 'Station Notice': return "station notice."
+    case 'Special Schedule': return "special schedule."
+    default: return status.toLowerCase() + "."
   }
+}
 
-  //sort trains to logical/preferred order
-  sortTrainOrder = trains => {
-    sortOrder = {'1':0,'2':1,'3':2,'4':3,'5':4,'6':5,'7':6,'A':7,'C':8,'E':9,'B':10,'D':11,
-                'F':12,'M':13,'G':14,'J':15,'Z':16,'L':17,'N':18,'Q':19,'R':20,'W':21,'S':22}
-    sortedTrains = []
-    trains.forEach(train => {
-      trainIndex = sortOrder[train.route]
-      if (trainIndex != null){
-        sortedTrains[trainIndex] = train
+const allRoutes = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','S']
+const sortOrder = {'1':0,'2':1,'3':2,'4':3,'5':4,'6':5,'7':6,'A':7,'C':8,'E':9,'B':10,'D':11,
+                   'F':12,'M':13,'G':14,'J':15,'Z':16,'L':17,'N':18,'Q':19,'R':20,'W':21,'S':22}
+
+exports.processAlerts = function(feedData) {
+  let now = Date.now() / 1000
+  let routeAlerts = {}
+
+  //collect active alerts per route
+  feedData.entity.forEach(e => {
+    let alert = e.alert
+    let mercury = alert['transit_realtime.mercury_alert']
+    let alertType = mercury ? mercury.alert_type : null
+    if (!alertType) return
+
+    //check if alert is currently active
+    let active = (alert.active_period || []).some(p => {
+      let start = p.start || 0
+      let end = p.end || Infinity
+      return now >= start && now <= end
+    })
+    if (!active) return
+
+    //map to affected routes
+    ;(alert.informed_entity || []).forEach(ie => {
+      if (ie.route_id && allRoutes.includes(ie.route_id)) {
+        if (!routeAlerts[ie.route_id]) routeAlerts[ie.route_id] = []
+        routeAlerts[ie.route_id].push(alertType)
       }
     })
-    return addCacheInfo(sortedTrains)
-  }
+  })
 
-  //remove unneeded data & simplify objects 
-  formatTrainData = trains => {
-    trains.forEach((train,index) => {
-      delete train.mode
-      delete train.agency
-      delete train.routeId
-      delete train.routeSortOrder
-      delete train.inService
-      delete train.routeType
-      if (train.statusDetails){
-        train.statusDetails = train.statusDetails[0]
-        delete train.statusDetails.creationDate
-        delete train.statusDetails.direction
-        delete train.statusDetails.endDate
-        delete train.statusDetails.priority
-        delete train.statusDetails.startDate
-      }
-      if (train.statusDetails == null){
-        train.statusDetails = {statusSummary:"all good."}
-      }else{
-        switch (train.statusDetails.statusSummary){
-          case "Planned Work": train.statusDetails.statusSummary = "planned work."
-          break
-          case "Service Change": train.statusDetails.statusSummary = "service change."
-          break
-          case "Delays": train.statusDetails.statusSummary = "delayed af."
-          break
-          case "Slow Speeds": train.statusDetails.statusSummary = "slow af."
-          break
-          default:   train.statusDetails.statusSummary = "probably screwed."
-        }
-      }
-    }) 
-    return sortTrainOrder(trains)
-  }
+  //build sorted train array
+  let trains = []
+  allRoutes.forEach(route => {
+    let alerts = routeAlerts[route]
+    let status
+    if (alerts && alerts.length > 0) {
+      status = mapStatus(pickWorstStatus(alerts))
+    } else {
+      status = "all good."
+    }
+    trains[sortOrder[route]] = {
+      route: route,
+      statusDetails: { statusSummary: status }
+    }
+  })
 
-  return formatTrainData(trains)
+  return {
+    trains: trains,
+    cacheTime: new Date
+  }
 }
-
