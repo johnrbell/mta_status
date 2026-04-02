@@ -6,11 +6,7 @@
 	let expanded = $state({});
 
 	function toggleExpand(route) {
-		if (expanded[route]) {
-			expanded = { ...expanded, [route]: false };
-		} else {
-			expanded = { [route]: true };
-		}
+		expanded = expanded[route] ? {} : { [route]: true };
 	}
 
 	const lineGroups = [

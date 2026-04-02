@@ -32,11 +32,9 @@ function mapStatus(status) {
 	if (status.startsWith('Planned')) return 'planned work.';
 	switch (status) {
 		case 'Severe Delays':
-			return 'trains cooked.';
 		case 'Delays':
 			return 'trains cooked.';
 		case 'Slow Speeds':
-			return 'sorta cooked.';
 		case 'Reduced Service':
 			return 'sorta cooked.';
 		case 'No Scheduled Service':
@@ -70,7 +68,7 @@ export function processAlerts(feedData) {
 	const now = Date.now() / 1000;
 	const routeAlerts = {};
 
-	for (const e of feedData.entity) {
+	for (const e of feedData.entity || []) {
 		const alert = e.alert;
 		const mercury = alert['transit_realtime.mercury_alert'];
 		const alertType = mercury ? mercury.alert_type : null;
@@ -121,14 +119,26 @@ const CACHE_TTL = 300;
 
 let cachedData = null;
 
+let inflight = null;
+
 export async function fetchTrainData() {
 	if (cachedData && (Date.now() - cachedData.cacheTime.getTime()) / 1000 < CACHE_TTL) {
 		return cachedData;
 	}
 
-	const res = await fetch(MTA_URL);
-	if (!res.ok) throw new Error('MTA API returned ' + res.status);
-	const json = await res.json();
-	cachedData = processAlerts(json);
-	return cachedData;
+	if (inflight) return inflight;
+
+	inflight = (async () => {
+		try {
+			const res = await fetch(MTA_URL, { signal: AbortSignal.timeout(10000) });
+			if (!res.ok) throw new Error('MTA API returned ' + res.status);
+			const json = await res.json();
+			cachedData = processAlerts(json);
+			return cachedData;
+		} finally {
+			inflight = null;
+		}
+	})();
+
+	return inflight;
 }

@@ -14,7 +14,6 @@
 		FADE_DURATION: 2000,
 		DURATION_MIN: 2000,
 		DURATION_MAX: 5000,
-		GRID_SIZE: 1
 	};
 
 	const COLORS = [
@@ -36,10 +35,6 @@
 	function diagBetween(fromIdx, toIdx) {
 		const d = ((toIdx - fromIdx) % 8 + 8) % 8;
 		return d <= 4 ? (fromIdx + 1) % 8 : ((fromIdx - 1) + 8) % 8;
-	}
-
-	function roundToGrid(v) {
-		return Math.round(v / CONFIG.GRID_SIZE) * CONFIG.GRID_SIZE;
 	}
 
 	function resizeCanvas() {
@@ -86,7 +81,7 @@
 		for (let t = 0; t < turns; t++) {
 			const dir = DIRS[cardIdx];
 			const step = 100 + Math.random() * 200;
-			cur = { x: roundToGrid(cur.x + dir.x * step), y: roundToGrid(cur.y + dir.y * step) };
+			cur = { x: Math.round(cur.x + dir.x * step), y: Math.round(cur.y + dir.y * step) };
 			path.push({ ...cur });
 			if (offScreen()) break;
 
@@ -101,7 +96,7 @@
 			const diagIdx = diagBetween(cardIdx, newCardIdx);
 			const diagDir = DIRS[diagIdx];
 			const kinkLen = 25 + Math.random() * 35;
-			cur = { x: roundToGrid(cur.x + diagDir.x * kinkLen), y: roundToGrid(cur.y + diagDir.y * kinkLen) };
+			cur = { x: Math.round(cur.x + diagDir.x * kinkLen), y: Math.round(cur.y + diagDir.y * kinkLen) };
 			path.push({ ...cur });
 			if (offScreen()) break;
 			cardIdx = newCardIdx;
@@ -110,7 +105,7 @@
 		if (!offScreen()) {
 			const dir = DIRS[cardIdx];
 			const extend = Math.max(w, h);
-			cur = { x: roundToGrid(cur.x + dir.x * extend), y: roundToGrid(cur.y + dir.y * extend) };
+			cur = { x: Math.round(cur.x + dir.x * extend), y: Math.round(cur.y + dir.y * extend) };
 			path.push({ ...cur });
 		}
 

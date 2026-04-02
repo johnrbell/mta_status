@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { env } from '$env/dynamic/private';
 
@@ -22,19 +22,20 @@ function randomDefault() {
 	return defaultImages[Math.floor(Math.random() * defaultImages.length)];
 }
 
-function newestImage() {
-	if (!fs.existsSync(BG_DIR)) {
-		fs.mkdirSync(BG_DIR, { recursive: true });
+async function newestImage() {
+	try {
+		const files = (await fs.readdir(BG_DIR)).filter((f) => f.endsWith('.jpg'));
+		if (files.length === 0) return null;
+		files.sort();
+		return files[files.length - 1];
+	} catch {
+		await fs.mkdir(BG_DIR, { recursive: true }).catch(() => {});
 		return null;
 	}
-	const files = fs.readdirSync(BG_DIR).filter((f) => f.endsWith('.jpg'));
-	if (files.length === 0) return null;
-	files.sort();
-	return files[files.length - 1];
 }
 
-function cachedImageFresh() {
-	const file = newestImage();
+async function cachedImageFresh() {
+	const file = await newestImage();
 	if (!file) return false;
 	const timestamp = parseInt(file.replace('.jpg', ''));
 	return Date.now() / 1000 - timestamp < CACHE_TTL;
@@ -43,16 +44,14 @@ function cachedImageFresh() {
 let memoryCache = { url: null, timestamp: 0 };
 
 export async function getBgImg() {
-	// Try disk cache first (works locally, not on Vercel)
 	try {
-		if (cachedImageFresh()) {
-			return '/img/bg/' + newestImage();
+		if (await cachedImageFresh()) {
+			return '/img/bg/' + await newestImage();
 		}
 	} catch {
-		// Filesystem not available (e.g. Vercel), fall through to in-memory + Unsplash
+		// Filesystem not available (e.g. Vercel)
 	}
 
-	// In-memory cache for serverless environments
 	if (memoryCache.url && Date.now() / 1000 - memoryCache.timestamp < CACHE_TTL) {
 		return memoryCache.url;
 	}
@@ -74,15 +73,14 @@ export async function getBgImg() {
 		const data = await searchRes.json();
 		const imgUrl = data.urls.regular;
 
-		// Try disk cache write
 		try {
-			const old = newestImage();
-			if (old) fs.unlinkSync(path.join(BG_DIR, old));
+			const old = await newestImage();
+			if (old) await fs.unlink(path.join(BG_DIR, old));
 			const filename = Math.floor(Date.now() / 1000) + '.jpg';
 			const imgRes = await fetch(imgUrl);
 			if (imgRes.ok) {
 				const buffer = Buffer.from(await imgRes.arrayBuffer());
-				fs.writeFileSync(path.join(BG_DIR, filename), buffer);
+				await fs.writeFile(path.join(BG_DIR, filename), buffer);
 				return '/img/bg/' + filename;
 			}
 		} catch {
