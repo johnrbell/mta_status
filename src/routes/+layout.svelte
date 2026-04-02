@@ -95,6 +95,7 @@
 	:global(html), :global(body) {
 		margin: 0;
 		padding: 0;
+		background-color: #222;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		color: white;
 	}
