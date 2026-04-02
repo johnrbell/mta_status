@@ -32,6 +32,11 @@
 
 	let trainMap = $derived(byRoute(data.trains));
 
+	$effect(() => {
+		data.trains;
+		expanded = {};
+	});
+
 	function formatDate(dateStr) {
 		if (!dateStr) return '';
 		const d = new Date(dateStr);
