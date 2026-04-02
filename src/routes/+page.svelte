@@ -109,6 +109,7 @@
 {#if $plaintext}
 <div class="signage">
 	{#each groups as group}
+		<div class="signage-group">
 		{#if group.uniform}
 			<div class="signage-row">
 				<span class="signage-bullets">
@@ -162,6 +163,7 @@
 				{/if}
 			{/each}
 		{/if}
+		</div>
 	{/each}
 </div>
 {:else}
@@ -228,12 +230,17 @@
 
 <style>
 	/* Signage mode */
+	.signage-group {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		padding-bottom: 10px;
+		margin-bottom: 2px;
+	}
+
 	.signage-row {
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		padding: 10px 0;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 10px 0 0 0;
 	}
 
 	.signage-bullets {
@@ -262,10 +269,6 @@
 		gap: 2px;
 	}
 
-	.signage-detail-row:last-of-type {
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		padding-bottom: 10px;
-	}
 
 	.signage-row-clickable {
 		cursor: pointer;
@@ -293,9 +296,9 @@
 	}
 
 	.signage-status {
-		font-size: 26px;
-		font-weight: 700;
-		color: #fff;
+		font-size: 18px;
+		font-weight: 500;
+		color: rgba(255, 255, 255, 0.85);
 	}
 
 	.signage-status-sm {
@@ -346,7 +349,7 @@
 			font-size: 17px;
 		}
 		.signage-status {
-			font-size: 32px;
+			font-size: 22px;
 		}
 		.signage-status-sm {
 			font-size: 22px;

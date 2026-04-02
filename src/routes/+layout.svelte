@@ -34,9 +34,12 @@
 	}
 </script>
 
+<svelte:body class:signage-active={$plaintext} />
+
 {#if $plaintext}
 	<div class="plaintext-wrap">
 		<div class="signage-header">Mta Status</div>
+		<div class="signage-subheader">Subway, at a glance.</div>
 		{@render children()}
 	</div>
 {:else}
@@ -89,6 +92,10 @@
 		overscroll-behavior: none;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
+	}
+
+	:global(body.signage-active) {
+		background-color: #000;
 	}
 
 	:global(a) {
@@ -220,8 +227,15 @@
 		font-size: 42px;
 		font-weight: 700;
 		letter-spacing: 0.01em;
-		margin-bottom: 24px;
+		margin-bottom: 4px;
 		line-height: 1.1;
+	}
+
+	.signage-subheader {
+		font-size: 24px;
+		font-weight: 400;
+		margin-bottom: 28px;
+		line-height: 1.2;
 	}
 
 	@media (min-width: 890px) {
@@ -231,7 +245,11 @@
 		}
 		.signage-header {
 			font-size: 56px;
-			margin-bottom: 32px;
+			margin-bottom: 6px;
+		}
+		.signage-subheader {
+			font-size: 32px;
+			margin-bottom: 36px;
 		}
 	}
 
@@ -239,7 +257,7 @@
 	.toggle {
 		position: fixed;
 		bottom: 8px;
-		right: 8px;
+		right: 20px;
 		z-index: 100000;
 		width: 34px;
 		height: 20px;
