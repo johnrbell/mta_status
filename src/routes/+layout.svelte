@@ -8,6 +8,11 @@
 	const plaintext = createPlaintextStore(data.plaintextMode);
 	setContext('plaintext', plaintext);
 
+	$effect(() => {
+		document.documentElement.style.backgroundColor = $plaintext ? '#000' : '';
+		document.body.style.backgroundColor = $plaintext ? '#000' : '';
+	});
+
 	let loading = $state(false);
 	let loadStart = 0;
 	const MIN_DURATION = 250;
@@ -34,8 +39,6 @@
 	}
 </script>
 
-<svelte:body class:signage-active={$plaintext} />
-
 {#if $plaintext}
 	<div class="plaintext-wrap">
 		<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
@@ -43,27 +46,29 @@
 		{@render children()}
 	</div>
 {:else}
-	{#if loading}
-		<div class="loader-overlay">
-			<div class="loader-ring">
-				<svg class="loader-svg" viewBox="0 0 100 100">
-					<circle class="loader-track" cx="50" cy="50" r="46" />
-					<circle class="loader-progress" cx="50" cy="50" r="46" />
-				</svg>
-				<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
+	<div class="normal-wrap">
+		{#if loading}
+			<div class="loader-overlay">
+				<div class="loader-ring">
+					<svg class="loader-svg" viewBox="0 0 100 100">
+						<circle class="loader-track" cx="50" cy="50" r="46" />
+						<circle class="loader-progress" cx="50" cy="50" r="46" />
+					</svg>
+					<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
+				</div>
 			</div>
+		{/if}
+
+		<div class="header">
+			<h1><a href="/" onclick={handleLogoClick}>MTA STATUS</a></h1>
+			<h2>Subway, at a glance.</h2>
 		</div>
-	{/if}
 
-	<div class="header">
-		<h1><a href="/" onclick={handleLogoClick}>MTA STATUS</a></h1>
-		<h2>Subway, at a glance.</h2>
+		{@render children()}
+
+		<div class="bg" style="background-image: url({data.bgImg})"></div>
+		<div class="screen"></div>
 	</div>
-
-	{@render children()}
-
-	<div class="bg" style="background-image: url({data.bgImg})"></div>
-	<div class="screen"></div>
 {/if}
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -85,28 +90,20 @@
 		padding: 0;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		color: white;
+	}
+
+	:global(a) {
+		color: white;
+	}
+
+	.normal-wrap {
 		-webkit-user-select: none;
 		user-select: none;
 		-webkit-tap-highlight-color: transparent;
 		-webkit-touch-callout: none;
 		overscroll-behavior: none;
-		overflow: auto;
 		-webkit-overflow-scrolling: touch;
-	}
-
-	:global(html:has(body.signage-active)),
-	:global(body.signage-active) {
-		background-color: #000;
-		-webkit-user-select: auto;
-		user-select: auto;
-		-webkit-touch-callout: default;
-		overscroll-behavior: auto;
-		touch-action: auto;
-		overflow: auto;
-	}
-
-	:global(a) {
-		color: white;
+		min-height: 100vh;
 	}
 
 	.screen {
