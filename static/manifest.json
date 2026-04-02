@@ -4,8 +4,8 @@
   "description": "Subway status, at a glance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#333333",
-  "theme_color": "#333333",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     { "src": "/img/icons/android-icon-36x36.png", "sizes": "36x36", "type": "image/png" },
     { "src": "/img/icons/android-icon-48x48.png", "sizes": "48x48", "type": "image/png" },
