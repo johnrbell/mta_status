@@ -40,6 +40,13 @@
 </script>
 
 {#if $plaintext}
+	{#if loading}
+		<div class="signage-loader-overlay">
+			<svg class="signage-spinner" viewBox="0 0 50 50">
+				<circle cx="25" cy="25" r="20" />
+			</svg>
+		</div>
+	{/if}
 	<div class="plaintext-wrap">
 		<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
 		<div class="signage-subheader">Subway, at a glance.</div>
@@ -213,6 +220,35 @@
 		.header h2 {
 			font-size: 40px;
 		}
+	}
+
+	/* Signage loader */
+	.signage-loader-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 99999;
+		background: rgba(0, 0, 0, 0.85);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.signage-spinner {
+		width: 48px;
+		height: 48px;
+		animation: signage-spin 0.8s linear infinite;
+	}
+
+	.signage-spinner circle {
+		fill: none;
+		stroke: #fff;
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-dasharray: 90 126;
+	}
+
+	@keyframes signage-spin {
+		to { transform: rotate(360deg); }
 	}
 
 	/* Signage mode */
