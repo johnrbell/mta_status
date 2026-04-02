@@ -2,20 +2,16 @@
 	import { beforeNavigate, afterNavigate, invalidateAll } from '$app/navigation';
 	import { setContext } from 'svelte';
 	import { createBgStore } from '$lib/mode.js';
+	import SubwayCanvas from '$lib/SubwayCanvas.svelte';
 
 	let { children, data } = $props();
 
-	const bgVisible = createBgStore(data.bgVisible);
-	setContext('bgVisible', bgVisible);
+	const bgMode = createBgStore(data.bgMode);
+	setContext('bgMode', bgMode);
 
 	$effect(() => {
-		if ($bgVisible) {
-			document.documentElement.style.backgroundColor = '';
-			document.body.style.backgroundColor = '';
-		} else {
-			document.documentElement.style.backgroundColor = '#000';
-			document.body.style.backgroundColor = '#000';
-		}
+		document.documentElement.style.backgroundColor = '#000';
+		document.body.style.backgroundColor = '#000';
 	});
 
 	let loading = $state(false);
@@ -52,9 +48,11 @@
 	</div>
 {/if}
 
-{#if $bgVisible}
+{#if $bgMode === 1}
 	<div class="bg" style="background-image: url({data.bgImg})"></div>
 	<div class="screen"></div>
+{:else if $bgMode === 2}
+	<SubwayCanvas />
 {/if}
 
 <div class="signage-wrap">
@@ -63,17 +61,23 @@
 	{@render children()}
 </div>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div
-	class="toggle"
-	class:toggle-on={$bgVisible}
-	onclick={bgVisible.toggle}
-	role="switch"
-	aria-checked={$bgVisible}
-	tabindex="0"
-	onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bgVisible.toggle(); } }}
->
-	<div class="toggle-thumb"></div>
+<div class="slider-wrap" role="radiogroup" aria-label="Background mode">
+	{#each [0, 1, 2] as mode}
+		<button
+			class="slider-opt"
+			class:slider-opt-active={$bgMode === mode}
+			onclick={() => bgMode.setMode(mode)}
+			aria-pressed={$bgMode === mode}
+		>
+			{#if mode === 0}
+				<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /><line x1="4" y1="12" x2="12" y2="4" stroke="currentColor" stroke-width="1.5" /></svg>
+			{:else if mode === 1}
+				<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><rect x="2" y="3" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" /><circle cx="5.5" cy="6.5" r="1.5" /><path d="M2 11l3-3 2 2 3-4 4 5v.5A1.5 1.5 0 0112.5 13h-9A1.5 1.5 0 012 11.5z" opacity="0.5" /></svg>
+			{:else}
+				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><line x1="2" y1="8" x2="6" y2="4" /><line x1="6" y1="4" x2="6" y2="12" /><line x1="6" y1="12" x2="10" y2="8" /><line x1="10" y1="8" x2="14" y2="8" /></svg>
+			{/if}
+		</button>
+	{/each}
 </div>
 
 <style>
@@ -180,39 +184,38 @@
 		}
 	}
 
-	/* Toggle */
-	.toggle {
+	/* 3-way slider */
+	.slider-wrap {
 		position: fixed;
-		bottom: 8px;
-		right: 20px;
+		bottom: 10px;
+		right: 16px;
 		z-index: 100000;
-		width: 34px;
-		height: 20px;
-		border-radius: 12px;
-		background: rgba(255, 255, 255, 0.35);
-		cursor: pointer;
-		transition: background 0.2s, box-shadow 0.2s;
+		display: flex;
+		gap: 2px;
+		background: rgba(255, 255, 255, 0.12);
+		border-radius: 10px;
+		padding: 3px;
 		-webkit-user-select: none;
 		user-select: none;
 	}
 
-	.toggle-on {
+	.slider-opt {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 22px;
+		border: none;
+		border-radius: 7px;
+		background: transparent;
+		color: rgba(255, 255, 255, 0.4);
+		cursor: pointer;
+		padding: 0;
+		transition: background 0.2s, color 0.2s;
+	}
+
+	.slider-opt-active {
 		background: rgba(255, 255, 255, 0.25);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-	}
-
-	.toggle-thumb {
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: #fff;
-		transition: transform 0.2s;
-	}
-
-	.toggle-on .toggle-thumb {
-		transform: translateX(14px);
+		color: #fff;
 	}
 </style>

@@ -1,18 +1,16 @@
 import { writable } from 'svelte/store';
 
-export function createBgStore(initial = false) {
+// 0 = black, 1 = photo, 2 = subway animation
+export function createBgStore(initial = 0) {
 	const store = writable(initial);
 
 	return {
 		subscribe: store.subscribe,
 		set: store.set,
 		update: store.update,
-		toggle() {
-			store.update(v => {
-				const next = !v;
-				document.cookie = `bg=${next ? '1' : '0'}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
-				return next;
-			});
+		setMode(mode) {
+			store.set(mode);
+			document.cookie = `bg=${mode}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
 		}
 	};
 }

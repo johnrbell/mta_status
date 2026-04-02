@@ -2,6 +2,6 @@ import { getBgImg } from '$lib/background.js';
 
 export async function load({ cookies }) {
 	const bgImg = await getBgImg();
-	const bgVisible = cookies.get('bg') === '1';
-	return { bgImg, bgVisible };
+	const bgMode = parseInt(cookies.get('bg') || '0', 10);
+	return { bgImg, bgMode };
 }
