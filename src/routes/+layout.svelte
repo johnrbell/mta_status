@@ -38,7 +38,7 @@
 
 {#if $plaintext}
 	<div class="plaintext-wrap">
-		<div class="signage-header">Mta Status</div>
+		<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
 		<div class="signage-subheader">Subway, at a glance.</div>
 		{@render children()}
 	</div>
@@ -229,11 +229,15 @@
 	}
 
 	.signage-header {
+		display: block;
 		font-size: 42px;
 		font-weight: 700;
 		letter-spacing: 0.01em;
 		margin-bottom: 4px;
 		line-height: 1.1;
+		text-decoration: none;
+		color: #fff;
+		cursor: pointer;
 	}
 
 	.signage-subheader {

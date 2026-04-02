@@ -110,15 +110,38 @@
 <div class="signage">
 	{#each groups as group}
 		<div class="signage-group">
-		{#if group.uniform}
-			<div class="signage-row">
+		{#if group.uniform || group.members.length === 1}
+			{@const solo = group.members.length === 1}
+			{@const train0 = group.members[0]}
+			{@const hasAlerts = solo && train0.alerts && train0.alerts.length > 0}
+			<div
+				class="signage-row"
+				class:signage-row-clickable={hasAlerts}
+				onclick={hasAlerts ? () => toggleExpand(train0.route) : undefined}
+				role={hasAlerts ? 'button' : undefined}
+				tabindex={hasAlerts ? 0 : undefined}
+				onkeydown={hasAlerts ? (e) => { if (e.key === 'Enter') toggleExpand(train0.route); } : undefined}
+			>
 				<span class="signage-bullets">
 					{#each group.members as train}
 						<span class="signage-bullet" style="background-color: {lineColors[train.route] || '#888'}">{train.route}</span>
 					{/each}
 				</span>
-				<span class="signage-status">{group.status}</span>
+				<span class="signage-status">{solo ? train0.statusDetails.statusSummary : group.status}</span>
 			</div>
+			{#if hasAlerts && expanded[train0.route]}
+				<div class="signage-alerts">
+					{#each train0.alerts as alert}
+						<div class="signage-alert">
+							<span class="signage-alert-type">{alert.type}</span>
+							<div class="signage-alert-desc">{alert.description}</div>
+							{#if alert.createdAt}
+								<div class="signage-alert-date">{formatDate(alert.createdAt)}</div>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{/if}
 		{:else}
 			<div class="signage-group-header">
 				{#each group.members as train}
