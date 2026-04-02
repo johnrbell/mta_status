@@ -56,7 +56,7 @@
 {/if}
 
 <div class="signage-wrap">
-	<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
+	<a href="/" class="signage-header" onclick={handleLogoClick}>MTA Status</a>
 	<div class="signage-subheader">Subway, at a glance.</div>
 	{@render children()}
 </div>
