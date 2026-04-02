@@ -14,6 +14,17 @@
 		document.body.style.backgroundColor = '#000';
 	});
 
+	let menuOpen = $state(false);
+
+	function toggleMenu() {
+		menuOpen = !menuOpen;
+	}
+
+	function selectMode(mode) {
+		bgMode.setMode(mode);
+		menuOpen = false;
+	}
+
 	let loading = $state(false);
 	let loadStart = 0;
 	const MIN_DURATION = 250;
@@ -61,24 +72,37 @@
 	{@render children()}
 </div>
 
-<div class="slider-wrap" role="radiogroup" aria-label="Background mode">
-	{#each [0, 1, 2] as mode}
-		<button
-			class="slider-opt"
-			class:slider-opt-active={$bgMode === mode}
-			onclick={() => bgMode.setMode(mode)}
-			aria-pressed={$bgMode === mode}
-		>
-			{#if mode === 0}
-				<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /><line x1="4" y1="12" x2="12" y2="4" stroke="currentColor" stroke-width="1.5" /></svg>
-			{:else if mode === 1}
-				<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><rect x="2" y="3" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" /><circle cx="5.5" cy="6.5" r="1.5" /><path d="M2 11l3-3 2 2 3-4 4 5v.5A1.5 1.5 0 0112.5 13h-9A1.5 1.5 0 012 11.5z" opacity="0.5" /></svg>
-			{:else}
-				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><line x1="2" y1="8" x2="6" y2="4" /><line x1="6" y1="4" x2="6" y2="12" /><line x1="6" y1="12" x2="10" y2="8" /><line x1="10" y1="8" x2="14" y2="8" /></svg>
-			{/if}
-		</button>
-	{/each}
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div class="menu-trigger" onclick={toggleMenu} role="button" tabindex="0" aria-label="Settings">
+	<svg viewBox="0 0 18 14" width="18" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+		<line x1="1" y1="2" x2="17" y2="2" /><line x1="1" y1="7" x2="17" y2="7" /><line x1="1" y1="12" x2="17" y2="12" />
+	</svg>
 </div>
+
+{#if menuOpen}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div class="menu-backdrop" onclick={() => { menuOpen = false; }} role="presentation"></div>
+	<div class="menu-dropdown" role="radiogroup" aria-label="Background mode">
+		{#each [0, 1, 2] as mode}
+			<button
+				class="menu-item"
+				class:menu-item-active={$bgMode === mode}
+				onclick={() => selectMode(mode)}
+			>
+				{#if mode === 0}
+					<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /><line x1="4" y1="12" x2="12" y2="4" stroke="currentColor" stroke-width="1.5" /></svg>
+					<span>Dark</span>
+				{:else if mode === 1}
+					<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><rect x="2" y="3" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" /><circle cx="5.5" cy="6.5" r="1.5" /><path d="M2 11l3-3 2 2 3-4 4 5v.5A1.5 1.5 0 0112.5 13h-9A1.5 1.5 0 012 11.5z" opacity="0.5" /></svg>
+					<span>Photo</span>
+				{:else}
+					<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><line x1="2" y1="8" x2="6" y2="4" /><line x1="6" y1="4" x2="6" y2="12" /><line x1="6" y1="12" x2="10" y2="8" /><line x1="10" y1="8" x2="14" y2="8" /></svg>
+					<span>Subway</span>
+				{/if}
+			</button>
+		{/each}
+	</div>
+{/if}
 
 <style>
 	:global(html), :global(body) {
@@ -201,38 +225,66 @@
 		}
 	}
 
-	/* 3-way slider */
-	.slider-wrap {
+	.menu-trigger {
 		position: fixed;
-		bottom: 10px;
-		right: 16px;
-		z-index: 100000;
-		display: flex;
-		gap: 2px;
-		background: rgba(255, 255, 255, 0.12);
-		border-radius: 10px;
-		padding: 3px;
-		-webkit-user-select: none;
-		user-select: none;
+		top: 12px;
+		right: 14px;
+		z-index: 100001;
+		color: rgba(255, 255, 255, 0.18);
+		cursor: pointer;
+		padding: 6px;
+		border-radius: 6px;
+		transition: color 0.2s;
 	}
 
-	.slider-opt {
+	.menu-trigger:hover {
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	.menu-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 100000;
+	}
+
+	.menu-dropdown {
+		position: fixed;
+		top: 36px;
+		right: 14px;
+		z-index: 100002;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		background: rgba(30, 30, 30, 0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-radius: 10px;
+		padding: 4px;
+		min-width: 100px;
+	}
+
+	.menu-item {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		width: 28px;
-		height: 22px;
+		gap: 8px;
 		border: none;
 		border-radius: 7px;
 		background: transparent;
-		color: rgba(255, 255, 255, 0.4);
+		color: rgba(255, 255, 255, 0.5);
 		cursor: pointer;
-		padding: 0;
-		transition: background 0.2s, color 0.2s;
+		padding: 8px 12px;
+		font-size: 13px;
+		font-family: 'Helvetica Neue', Arial, sans-serif;
+		transition: background 0.15s, color 0.15s;
+		white-space: nowrap;
 	}
 
-	.slider-opt-active {
-		background: rgba(255, 255, 255, 0.25);
+	.menu-item:hover {
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.menu-item-active {
+		background: rgba(255, 255, 255, 0.12);
 		color: #fff;
 	}
 </style>
