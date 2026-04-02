@@ -95,7 +95,6 @@
 	:global(html), :global(body) {
 		margin: 0;
 		padding: 0;
-		background-color: #222;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		color: white;
 	}
@@ -115,7 +114,10 @@
 	}
 
 	.screen {
-		inset: 0;
+		top: -50px;
+		left: -50px;
+		right: -50px;
+		bottom: -50px;
 		background-color: #222;
 		opacity: 0.7;
 		position: fixed;
@@ -123,7 +125,10 @@
 	}
 
 	.bg {
-		inset: 0;
+		top: -50px;
+		left: -50px;
+		right: -50px;
+		bottom: -50px;
 		background-color: #333;
 		background-size: cover;
 		background-position: center center;
