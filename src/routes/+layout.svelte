@@ -96,6 +96,11 @@
 
 	:global(body.signage-active) {
 		background-color: #000;
+		-webkit-user-select: auto;
+		user-select: auto;
+		-webkit-touch-callout: default;
+		overscroll-behavior: auto;
+		touch-action: auto;
 	}
 
 	:global(a) {
