@@ -228,11 +228,6 @@
 		box-sizing: border-box;
 		max-width: 600px;
 		margin: 0 auto;
-		-webkit-overflow-scrolling: touch;
-		overflow-y: auto;
-		-webkit-user-select: auto;
-		user-select: auto;
-		-webkit-touch-callout: default;
 	}
 
 	.signage-header {
