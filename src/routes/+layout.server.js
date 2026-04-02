@@ -1,6 +1,7 @@
 import { getBgImg } from '$lib/background.js';
 
-export async function load() {
+export async function load({ cookies }) {
 	const bgImg = await getBgImg();
-	return { bgImg };
+	const plaintextMode = cookies.get('plaintext') === '1';
+	return { bgImg, plaintextMode };
 }

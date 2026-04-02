@@ -1,7 +1,13 @@
 <script>
 	import { beforeNavigate, afterNavigate, invalidateAll } from '$app/navigation';
+	import { setContext } from 'svelte';
+	import { createPlaintextStore } from '$lib/mode.js';
 
 	let { children, data } = $props();
+
+	const plaintext = createPlaintextStore(data.plaintextMode);
+	setContext('plaintext', plaintext);
+
 	let loading = $state(false);
 	let loadStart = 0;
 	const MIN_DURATION = 250;
@@ -28,27 +34,47 @@
 	}
 </script>
 
-{#if loading}
-	<div class="loader-overlay">
-		<div class="loader-ring">
-			<svg class="loader-svg" viewBox="0 0 100 100">
-				<circle class="loader-track" cx="50" cy="50" r="46" />
-				<circle class="loader-progress" cx="50" cy="50" r="46" />
-			</svg>
-			<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
-		</div>
+{#if $plaintext}
+	<div class="plaintext-wrap">
+		<div class="signage-header">Mta Status</div>
+		{@render children()}
 	</div>
+{:else}
+	{#if loading}
+		<div class="loader-overlay">
+			<div class="loader-ring">
+				<svg class="loader-svg" viewBox="0 0 100 100">
+					<circle class="loader-track" cx="50" cy="50" r="46" />
+					<circle class="loader-progress" cx="50" cy="50" r="46" />
+				</svg>
+				<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
+			</div>
+		</div>
+	{/if}
+
+	<div class="header">
+		<h1><a href="/" onclick={handleLogoClick}>MTA STATUS</a></h1>
+		<h2>Subway, at a glance.</h2>
+	</div>
+
+	{@render children()}
+
+	<div class="bg" style="background-image: url({data.bgImg})"></div>
+	<div class="screen"></div>
 {/if}
 
-<div class="header">
-	<h1><a href="/" onclick={handleLogoClick}>MTA STATUS</a></h1>
-	<h2>Subway, at a glance.</h2>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div
+	class="toggle"
+	class:toggle-on={$plaintext}
+	onclick={plaintext.toggle}
+	role="switch"
+	aria-checked={$plaintext}
+	tabindex="0"
+	onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); plaintext.toggle(); } }}
+>
+	<div class="toggle-thumb"></div>
 </div>
-
-{@render children()}
-
-<div class="bg" style="background-image: url({data.bgImg})"></div>
-<div class="screen"></div>
 
 <style>
 	:global(html), :global(body) {
@@ -176,5 +202,72 @@
 		.header h2 {
 			font-size: 40px;
 		}
+	}
+
+	/* Signage mode */
+	.plaintext-wrap {
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		color: #fff;
+		background: #000;
+		min-height: 100vh;
+		padding: 28px 24px;
+		box-sizing: border-box;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.signage-header {
+		font-size: 42px;
+		font-weight: 700;
+		letter-spacing: 0.01em;
+		margin-bottom: 24px;
+		line-height: 1.1;
+	}
+
+	@media (min-width: 890px) {
+		.plaintext-wrap {
+			padding: 40px 48px;
+			max-width: 700px;
+		}
+		.signage-header {
+			font-size: 56px;
+			margin-bottom: 32px;
+		}
+	}
+
+	/* Toggle */
+	.toggle {
+		position: fixed;
+		bottom: 8px;
+		right: 8px;
+		z-index: 100000;
+		width: 34px;
+		height: 20px;
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.35);
+		cursor: pointer;
+		transition: background 0.2s, box-shadow 0.2s;
+		-webkit-user-select: none;
+		user-select: none;
+	}
+
+	.toggle-on {
+		background: rgba(255, 255, 255, 0.25);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+	}
+
+	.toggle-thumb {
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #fff;
+		transition: transform 0.2s;
+	}
+
+	.toggle-on .toggle-thumb {
+		transform: translateX(14px);
 	}
 </style>
