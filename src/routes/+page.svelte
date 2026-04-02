@@ -6,7 +6,11 @@
 	let expanded = $state({});
 
 	function toggleExpand(route) {
-		expanded = { ...expanded, [route]: !expanded[route] };
+		if (expanded[route]) {
+			expanded = { ...expanded, [route]: false };
+		} else {
+			expanded = { [route]: true };
+		}
 	}
 
 	const lineGroups = [
@@ -22,49 +26,15 @@
 		['S'],
 	];
 
-	function getGroupedTrains(trains) {
-		const byRoute = {};
+	function byRoute(trains) {
+		const map = {};
 		for (const t of trains) {
-			if (t) byRoute[t.route] = t;
+			if (t) map[t.route] = t;
 		}
-		return lineGroups
-			.map(routes => {
-				const members = routes.map(r => byRoute[r]).filter(Boolean);
-				if (members.length === 0) return null;
-				const statuses = new Set(members.map(m => m.statusDetails.statusSummary));
-				const hasAnyAlerts = members.some(m => m.alerts && m.alerts.length > 0);
-				const uniform = statuses.size === 1 && !hasAnyAlerts;
-
-				let subgroups = [];
-				if (!uniform) {
-					const statusMap = {};
-					for (const m of members) {
-						const hasAlerts = m.alerts && m.alerts.length > 0;
-						if (hasAlerts) {
-							subgroups.push({ trains: [m], status: m.statusDetails.statusSummary, hasAlerts: true });
-						} else {
-							const key = m.statusDetails.statusSummary;
-							if (!statusMap[key]) {
-								statusMap[key] = { trains: [], status: key, hasAlerts: false };
-							}
-							statusMap[key].trains.push(m);
-						}
-					}
-					const grouped = Object.values(statusMap);
-					subgroups = [...grouped, ...subgroups.filter(s => s.hasAlerts)];
-					subgroups.sort((a, b) => {
-						const ai = members.findIndex(m => m.route === a.trains[0].route);
-						const bi = members.findIndex(m => m.route === b.trains[0].route);
-						return ai - bi;
-					});
-				}
-
-				return { routes, members, uniform, status: members[0]?.statusDetails.statusSummary, subgroups };
-			})
-			.filter(Boolean);
+		return map;
 	}
 
-	let groups = $derived(getGroupedTrains(data.trains));
+	let trainMap = $derived(byRoute(data.trains));
 
 	function formatDate(dateStr) {
 		if (!dateStr) return '';
@@ -80,215 +50,179 @@
 	}
 </script>
 
-<div class="signage">
-	{#each groups as group}
-		<div class="signage-group">
-		{#if group.uniform || group.members.length === 1}
-			{@const solo = group.members.length === 1}
-			{@const train0 = group.members[0]}
-			{@const hasAlerts = solo && train0.alerts && train0.alerts.length > 0}
-			<div
-				class="signage-row"
-				class:signage-row-clickable={hasAlerts}
-				onclick={hasAlerts ? () => toggleExpand(train0.route) : undefined}
-				role={hasAlerts ? 'button' : undefined}
-				tabindex={hasAlerts ? 0 : undefined}
-				onkeydown={hasAlerts ? (e) => { if (e.key === 'Enter') toggleExpand(train0.route); } : undefined}
-			>
-				<span class="signage-bullets">
-					{#each group.members as train}
-						<span class="signage-bullet" style="background-color: {lineColors[train.route] || '#888'}">{train.route}</span>
-					{/each}
-				</span>
-				<span class="signage-status">{solo ? train0.statusDetails.statusSummary : group.status}</span>
-			</div>
-			{#if hasAlerts && expanded[train0.route]}
-				<div class="signage-alerts">
-					{#each train0.alerts as alert}
-						<div class="signage-alert">
-							<span class="signage-alert-type">{alert.type}</span>
-							<div class="signage-alert-desc">{alert.description}</div>
-							{#if alert.createdAt}
-								<div class="signage-alert-date">{formatDate(alert.createdAt)}</div>
-							{/if}
-						</div>
-					{/each}
+<div class="container">
+	{#each lineGroups as group}
+		{@const members = group.map(r => trainMap[r]).filter(Boolean)}
+		{@const expandedTrain = members.find(m => expanded[m.route] && m.alerts?.length > 0)}
+		<div class="row">
+			{#each members as train}
+				{@const hasAlerts = train.alerts && train.alerts.length > 0}
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<div
+					class="train"
+					class:has-alerts={hasAlerts}
+					onclick={hasAlerts ? () => toggleExpand(train.route) : undefined}
+					role={hasAlerts ? 'button' : undefined}
+					tabindex={hasAlerts ? 0 : undefined}
+					onkeydown={hasAlerts ? (e) => { if (e.key === 'Enter') toggleExpand(train.route); } : undefined}
+				>
+					<div class="circle" style="background-color: {lineColors[train.route] || '#888'}">
+						<span class="letter">{train.route}</span>
+					</div>
+					<div class="status">{train.statusDetails.statusSummary}</div>
 				</div>
-			{/if}
-		{:else}
-			<div class="signage-group-header">
-				{#each group.members as train}
-					<span class="signage-bullet" style="background-color: {lineColors[train.route] || '#888'}">{train.route}</span>
+			{/each}
+		</div>
+		{#if expandedTrain}
+			<div class="alerts">
+				<div class="alerts-header">
+					<span class="alerts-circle" style="background-color: {lineColors[expandedTrain.route] || '#888'}">{expandedTrain.route}</span>
+					Alerts
+				</div>
+				{#each expandedTrain.alerts as alert}
+					<div class="alert-item">
+						<span class="alert-type">{alert.type}</span>
+						<div class="alert-desc">{alert.description}</div>
+						{#if alert.createdAt}
+							<div class="alert-date">{formatDate(alert.createdAt)}</div>
+						{/if}
+					</div>
 				{/each}
 			</div>
-			{#each group.subgroups as sub}
-				{#if sub.hasAlerts}
-					{@const train = sub.trains[0]}
-					<div
-						class="signage-detail-row signage-row-clickable"
-						onclick={() => toggleExpand(train.route)}
-						role="button"
-						tabindex="0"
-						onkeydown={(e) => { if (e.key === 'Enter') toggleExpand(train.route); }}
-					>
-						<span class="signage-bullet signage-bullet-sm" style="background-color: {lineColors[train.route] || '#888'}">{train.route}</span>
-						<span class="signage-status-sm">{sub.status}</span>
-					</div>
-					{#if expanded[train.route]}
-						<div class="signage-alerts">
-							{#each train.alerts as alert}
-								<div class="signage-alert">
-									<span class="signage-alert-type">{alert.type}</span>
-									<div class="signage-alert-desc">{alert.description}</div>
-									{#if alert.createdAt}
-										<div class="signage-alert-date">{formatDate(alert.createdAt)}</div>
-									{/if}
-								</div>
-							{/each}
-						</div>
-					{/if}
-				{:else}
-					<div class="signage-detail-row">
-						<span class="signage-detail-bullets">
-							{#each sub.trains as train}
-								<span class="signage-bullet signage-bullet-sm" style="background-color: {lineColors[train.route] || '#888'}">{train.route}</span>
-							{/each}
-						</span>
-						<span class="signage-status-sm">{sub.status}</span>
-					</div>
-				{/if}
-			{/each}
 		{/if}
-		</div>
 	{/each}
 </div>
 
 <style>
-	.signage-group {
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		padding-bottom: 10px;
-		margin-bottom: 2px;
+	.container {
+		position: relative;
+		max-width: 1200px;
+		margin: 10px auto 0 auto;
 	}
 
-	.signage-row {
+	.row {
 		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 10px 0 0 0;
-	}
-
-	.signage-bullets {
-		display: flex;
-		align-items: center;
-		gap: 3px;
-	}
-
-	.signage-group-header {
-		display: flex;
-		align-items: center;
-		gap: 3px;
-		padding: 10px 0 6px 0;
-	}
-
-	.signage-detail-row {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 4px 0 4px 6px;
-	}
-
-	.signage-detail-bullets {
-		display: flex;
-		align-items: center;
+		justify-content: flex-start;
 		gap: 2px;
+		margin-bottom: 12px;
+		flex-wrap: wrap;
 	}
 
-	.signage-row-clickable {
+	.train {
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		width: 62px;
+	}
+
+	.has-alerts {
 		cursor: pointer;
 	}
 
-	.signage-bullet {
-		display: inline-flex;
+	.circle {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 42px;
-		height: 42px;
-		min-width: 42px;
-		border-radius: 50%;
+	}
+
+	.letter {
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		font-weight: 500;
+		font-size: 35px;
 		color: #fff;
-		font-size: 25px;
-		font-weight: bold;
 		line-height: 1;
 	}
 
-	.signage-bullet-sm {
-		width: 26px;
-		height: 26px;
-		min-width: 26px;
-		font-size: 15px;
-	}
-
-	.signage-status {
-		font-size: 18px;
+	.status {
+		font-size: 13px;
 		font-weight: 700;
 		color: rgba(255, 255, 255, 0.85);
+		margin-top: 3px;
+		text-align: center;
+		line-height: 1.2;
 	}
 
-	.signage-status-sm {
-		font-size: 18px;
+	.alerts {
+		text-align: left;
+		padding: 12px 16px 16px 16px;
+		margin: -12px auto 20px auto;
+		max-width: 500px;
+		background: rgba(255, 255, 255, 0.06);
+		border-radius: 10px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.alerts-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 16px;
 		font-weight: 700;
-		color: rgba(255, 255, 255, 0.85);
+		margin-bottom: 10px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
-	.signage-alerts {
-		padding-left: 38px;
-		margin-bottom: 6px;
+	.alerts-circle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		color: #fff;
+		font-size: 14px;
+		font-weight: bold;
 	}
 
-	.signage-alert {
-		margin-bottom: 6px;
+	.alert-item {
+		margin-bottom: 10px;
 	}
 
-	.signage-alert-type {
+	.alert-item:last-child {
+		margin-bottom: 0;
+	}
+
+	.alert-type {
 		font-size: 14px;
 		font-weight: bold;
 		color: rgba(255, 255, 255, 0.8);
 	}
 
-	.signage-alert-desc {
+	.alert-desc {
 		font-size: 14px;
 		font-weight: 400;
 		line-height: 1.5;
 		color: rgba(255, 255, 255, 0.6);
 	}
 
-	.signage-alert-date {
+	.alert-date {
 		font-size: 11px;
 		color: rgba(255, 255, 255, 0.35);
 		margin-top: 3px;
 	}
 
 	@media (min-width: 890px) {
-		.signage-bullet {
-			width: 52px;
-			height: 52px;
-			min-width: 52px;
-			font-size: 30px;
+		.row {
+			gap: 16px;
+			margin-bottom: 40px;
 		}
-		.signage-bullet-sm {
-			width: 30px;
-			height: 30px;
-			min-width: 30px;
-			font-size: 17px;
+		.train {
+			width: 100px;
 		}
-		.signage-status {
-			font-size: 22px;
+		.circle {
+			width: 75px;
+			height: 75px;
 		}
-		.signage-status-sm {
-			font-size: 22px;
+		.letter {
+			font-size: 52px;
 		}
-		.signage-alerts {
-			padding-left: 42px;
+		.status {
+			font-size: 18px;
+			margin-top: 7px;
 		}
 	}
 </style>
