@@ -112,7 +112,7 @@
 		display: inline-flex;
 		flex-direction: column;
 		align-items: center;
-		width: 62px;
+		width: 78px;
 	}
 
 	.has-alerts {
@@ -120,8 +120,8 @@
 	}
 
 	.circle {
-		width: 50px;
-		height: 50px;
+		width: 65px;
+		height: 65px;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -131,16 +131,16 @@
 	.letter {
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		font-weight: 500;
-		font-size: 35px;
+		font-size: 43px;
 		color: #fff;
 		line-height: 1;
 	}
 
 	.status {
-		font-size: 13px;
+		font-size: 15px;
 		font-weight: 700;
 		color: rgba(255, 255, 255, 0.85);
-		margin-top: 3px;
+		margin-top: 4px;
 		text-align: center;
 		line-height: 1.2;
 	}
