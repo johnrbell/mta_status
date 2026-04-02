@@ -156,7 +156,7 @@
 
 	.signage-header {
 		display: block;
-		font-size: 42px;
+		font-size: clamp(42px, 10vw, 64px);
 		font-weight: 700;
 		letter-spacing: 0.01em;
 		margin-bottom: 4px;
@@ -167,7 +167,7 @@
 	}
 
 	.signage-subheader {
-		font-size: 24px;
+		font-size: clamp(24px, 5.5vw, 36px);
 		font-weight: 400;
 		margin-bottom: 28px;
 		line-height: 1.2;
@@ -177,14 +177,6 @@
 		.signage-wrap {
 			padding: 40px 48px;
 			max-width: 700px;
-		}
-		.signage-header {
-			font-size: 56px;
-			margin-bottom: 6px;
-		}
-		.signage-subheader {
-			font-size: 32px;
-			margin-bottom: 36px;
 		}
 	}
 
