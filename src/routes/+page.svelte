@@ -230,13 +230,13 @@
 
 	.signage-status {
 		font-size: 18px;
-		font-weight: 500;
+		font-weight: 700;
 		color: rgba(255, 255, 255, 0.85);
 	}
 
 	.signage-status-sm {
 		font-size: 18px;
-		font-weight: 500;
+		font-weight: 700;
 		color: rgba(255, 255, 255, 0.85);
 	}
 
