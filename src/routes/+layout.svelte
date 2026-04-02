@@ -145,8 +145,6 @@
 		min-height: 100vh;
 		padding: 28px 24px;
 		box-sizing: border-box;
-		width: 75vw;
-		max-width: 600px;
 		margin: 0 auto;
 	}
 
