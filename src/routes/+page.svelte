@@ -113,6 +113,7 @@
 
 	.has-alerts {
 		cursor: pointer;
+		outline: none;
 	}
 
 	.circle {
@@ -144,9 +145,9 @@
 	.alerts {
 		text-align: left;
 		padding: 12px 16px 16px 16px;
-		margin: -12px auto 20px auto;
+		margin: 8px auto 20px auto;
 		max-width: 500px;
-		background: rgba(255, 255, 255, 0.06);
+		background: rgba(255, 255, 255, 0.16);
 		border-radius: 10px;
 		border: 1px solid rgba(255, 255, 255, 0.08);
 	}

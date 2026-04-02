@@ -86,6 +86,11 @@
 		padding: 0;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		color: white;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		user-select: none;
+		overscroll-behavior: none;
 	}
 
 	:global(a) {
