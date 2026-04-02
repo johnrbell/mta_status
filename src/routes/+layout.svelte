@@ -1,16 +1,21 @@
 <script>
 	import { beforeNavigate, afterNavigate, invalidateAll } from '$app/navigation';
 	import { setContext } from 'svelte';
-	import { createPlaintextStore } from '$lib/mode.js';
+	import { createBgStore } from '$lib/mode.js';
 
 	let { children, data } = $props();
 
-	const plaintext = createPlaintextStore(data.plaintextMode);
-	setContext('plaintext', plaintext);
+	const bgVisible = createBgStore(data.bgVisible);
+	setContext('bgVisible', bgVisible);
 
 	$effect(() => {
-		document.documentElement.style.backgroundColor = $plaintext ? '#000' : '';
-		document.body.style.backgroundColor = $plaintext ? '#000' : '';
+		if ($bgVisible) {
+			document.documentElement.style.backgroundColor = '';
+			document.body.style.backgroundColor = '';
+		} else {
+			document.documentElement.style.backgroundColor = '#000';
+			document.body.style.backgroundColor = '#000';
+		}
 	});
 
 	let loading = $state(false);
@@ -39,54 +44,34 @@
 	}
 </script>
 
-{#if $plaintext}
-	{#if loading}
-		<div class="signage-loader-overlay">
-			<svg class="signage-spinner" viewBox="0 0 50 50">
-				<circle cx="25" cy="25" r="20" />
-			</svg>
-		</div>
-	{/if}
-	<div class="plaintext-wrap">
-		<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
-		<div class="signage-subheader">Subway, at a glance.</div>
-		{@render children()}
-	</div>
-{:else}
-	<div class="normal-wrap">
-		{#if loading}
-			<div class="loader-overlay">
-				<div class="loader-ring">
-					<svg class="loader-svg" viewBox="0 0 100 100">
-						<circle class="loader-track" cx="50" cy="50" r="46" />
-						<circle class="loader-progress" cx="50" cy="50" r="46" />
-					</svg>
-					<img src="/img/icons/apple-icon-180x180.png" alt="Loading" class="loader-icon" />
-				</div>
-			</div>
-		{/if}
-
-		<div class="header">
-			<h1><a href="/" onclick={handleLogoClick}>MTA STATUS</a></h1>
-			<h2>Subway, at a glance.</h2>
-		</div>
-
-		{@render children()}
-
-		<div class="bg" style="background-image: url({data.bgImg})"></div>
-		<div class="screen"></div>
+{#if loading}
+	<div class="signage-loader-overlay">
+		<svg class="signage-spinner" viewBox="0 0 50 50">
+			<circle cx="25" cy="25" r="20" />
+		</svg>
 	</div>
 {/if}
+
+{#if $bgVisible}
+	<div class="bg" style="background-image: url({data.bgImg})"></div>
+	<div class="screen"></div>
+{/if}
+
+<div class="signage-wrap">
+	<a href="/" class="signage-header" onclick={handleLogoClick}>Mta Status</a>
+	<div class="signage-subheader">Subway, at a glance.</div>
+	{@render children()}
+</div>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="toggle"
-	class:toggle-on={$plaintext}
-	onclick={plaintext.toggle}
+	class:toggle-on={$bgVisible}
+	onclick={bgVisible.toggle}
 	role="switch"
-	aria-checked={$plaintext}
+	aria-checked={$bgVisible}
 	tabindex="0"
-	onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); plaintext.toggle(); } }}
+	onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bgVisible.toggle(); } }}
 >
 	<div class="toggle-thumb"></div>
 </div>
@@ -103,129 +88,23 @@
 		color: white;
 	}
 
-	.normal-wrap {
-		-webkit-user-select: none;
-		user-select: none;
-		-webkit-tap-highlight-color: transparent;
-		-webkit-touch-callout: none;
-		overscroll-behavior: none;
-		-webkit-overflow-scrolling: touch;
-		min-height: 100vh;
-	}
-
 	.screen {
-		top: -50px;
-		left: -50px;
-		right: -50px;
-		bottom: -50px;
+		inset: 0;
 		background-color: #222;
 		opacity: 0.7;
 		position: fixed;
-		z-index: -1;
+		z-index: 1;
 	}
 
 	.bg {
-		top: -50px;
-		left: -50px;
-		right: -50px;
-		bottom: -50px;
+		inset: 0;
 		background-color: #333;
 		background-size: cover;
 		background-position: center center;
 		background-repeat: no-repeat;
-		z-index: -2;
+		z-index: 0;
 		position: fixed;
 		text-align: center;
-	}
-
-	.header {
-		text-align: center;
-		width: 100%;
-		height: auto;
-		margin-top: 10px;
-		margin-bottom: 10px;
-		padding: 0;
-	}
-
-	.header h1 {
-		padding-top: 10px;
-		font-size: 14vw;
-		line-height: 0px;
-		font-weight: lighter;
-	}
-
-	.header h1 a {
-		color: #fff;
-		text-decoration: none;
-	}
-
-	.header h2 {
-		font-size: 7.5vw;
-		line-height: 15px;
-		font-weight: lighter;
-	}
-
-	.loader-overlay {
-		position: fixed;
-		inset: 0;
-		z-index: 99999;
-		background: rgba(0, 0, 0, 0.7);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.loader-ring {
-		position: relative;
-		width: 96px;
-		height: 96px;
-	}
-
-	.loader-svg {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		transform: rotate(-90deg);
-	}
-
-	.loader-track {
-		fill: none;
-		stroke: rgba(255, 255, 255, 0.15);
-		stroke-width: 4;
-	}
-
-	.loader-progress {
-		fill: none;
-		stroke: #FF8844;
-		stroke-width: 4;
-		stroke-linecap: round;
-		stroke-dasharray: 289;
-		stroke-dashoffset: 289;
-		animation: wrap 0.25s linear forwards;
-	}
-
-	@keyframes wrap {
-		to { stroke-dashoffset: 0; }
-	}
-
-	.loader-icon {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 76px;
-		height: 76px;
-		border-radius: 50%;
-	}
-
-	@media (min-width: 890px) {
-		.header h1 {
-			font-size: 120px;
-		}
-		.header h2 {
-			font-size: 40px;
-		}
 	}
 
 	/* Signage loader */
@@ -257,11 +136,12 @@
 		to { transform: rotate(360deg); }
 	}
 
-	/* Signage mode */
-	.plaintext-wrap {
+	/* Signage layout */
+	.signage-wrap {
+		position: relative;
+		z-index: 2;
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		color: #fff;
-		background: #000;
 		min-height: 100vh;
 		padding: 28px 24px;
 		box-sizing: border-box;
@@ -289,7 +169,7 @@
 	}
 
 	@media (min-width: 890px) {
-		.plaintext-wrap {
+		.signage-wrap {
 			padding: 40px 48px;
 			max-width: 700px;
 		}

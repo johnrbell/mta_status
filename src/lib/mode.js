@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export function createPlaintextStore(initial = false) {
+export function createBgStore(initial = false) {
 	const store = writable(initial);
 
 	return {
@@ -10,7 +10,7 @@ export function createPlaintextStore(initial = false) {
 		toggle() {
 			store.update(v => {
 				const next = !v;
-				document.cookie = `plaintext=${next ? '1' : '0'}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+				document.cookie = `bg=${next ? '1' : '0'}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
 				return next;
 			});
 		}
