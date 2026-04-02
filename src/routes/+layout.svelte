@@ -94,6 +94,7 @@
 		-webkit-overflow-scrolling: touch;
 	}
 
+	:global(html:has(body.signage-active)),
 	:global(body.signage-active) {
 		background-color: #000;
 		-webkit-user-select: auto;
@@ -101,6 +102,7 @@
 		-webkit-touch-callout: default;
 		overscroll-behavior: auto;
 		touch-action: auto;
+		overflow: auto;
 	}
 
 	:global(a) {
