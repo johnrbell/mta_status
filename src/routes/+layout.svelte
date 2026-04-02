@@ -165,7 +165,7 @@
 
 	.signage-header {
 		display: block;
-		font-size: clamp(42px, 10vw, 64px);
+		font-size: clamp(42px, 15vw, 64px);
 		font-weight: 700;
 		letter-spacing: 0.01em;
 		margin-bottom: 4px;
@@ -176,10 +176,22 @@
 	}
 
 	.signage-subheader {
-		font-size: clamp(24px, 5.5vw, 36px);
+		font-size: clamp(24px, 8.5vw, 36px);
 		font-weight: 400;
 		margin-bottom: 28px;
 		line-height: 1.2;
+	}
+
+	@media (max-width: 767px) {
+		.signage-wrap {
+			padding: 28px 16px;
+		}
+	}
+
+	@media (max-width: 767px) and (display-mode: standalone) {
+		.signage-wrap {
+			padding-top: calc(28px + env(safe-area-inset-top));
+		}
 	}
 
 	@media (min-width: 890px) {

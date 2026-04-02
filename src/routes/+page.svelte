@@ -105,7 +105,7 @@
 		display: flex;
 		justify-content: flex-start;
 		gap: 2px;
-		margin-bottom: 12px;
+		margin-bottom: 20px;
 		flex-wrap: wrap;
 	}
 
@@ -205,6 +205,20 @@
 		font-size: 11px;
 		color: rgba(255, 255, 255, 0.35);
 		margin-top: 3px;
+	}
+
+	@media (max-width: 767px) {
+		.train {
+			width: calc(25% - 2px);
+		}
+		.circle {
+			width: 85%;
+			height: unset;
+			aspect-ratio: 1;
+		}
+		.letter {
+			font-size: 11vw;
+		}
 	}
 
 	@media (min-width: 890px) {
