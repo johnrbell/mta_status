@@ -177,11 +177,10 @@
 	}
 
 	.feed-subtitle {
-		font-size: clamp(18px, 5.5vw, 30px);
+		font-size: clamp(16px, 4vw, 24px);
 		font-weight: 400;
 		line-height: 1.2;
 		white-space: nowrap;
-		max-width: 80%;
 	}
 
 	.stories-bar {
