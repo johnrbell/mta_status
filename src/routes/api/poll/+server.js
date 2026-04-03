@@ -5,6 +5,9 @@ import { fetchTrainData, allRoutes } from '$lib/mta.js';
 import { getSupabase } from '$lib/supabase.js';
 import { personas } from '$lib/personas.js';
 
+/** If status is unchanged, still post to social_feed when the line's last post is older than this (ms). */
+const SOCIAL_HEARTBEAT_MS = 24 * 60 * 60 * 1000;
+
 export async function POST({ request }) {
 	const secret = request.headers.get('x-cron-secret');
 	if (!env.CRON_SECRET || secret !== env.CRON_SECRET) {
@@ -12,8 +15,8 @@ export async function POST({ request }) {
 	}
 
 	const supabase = getSupabase();
-	const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-	const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+	const genAI = env.GEMINI_API_KEY ? new GoogleGenerativeAI(env.GEMINI_API_KEY) : null;
+	const model = genAI?.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 	let trainData;
 	try {
@@ -45,8 +48,50 @@ export async function POST({ request }) {
 			continue;
 		}
 
+		let skipDuplicateStatusLog = false;
+		let heartbeatLatestPost = null;
 		if (lastLog && lastLog.status_text === currentStatus) {
-			skipped++;
+			const { data: latestFeed, error: latestFeedErr } = await supabase
+				.from('social_feed')
+				.select('created_at, content, alert_details')
+				.eq('line', route)
+				.order('created_at', { ascending: false })
+				.limit(1)
+				.maybeSingle();
+
+			if (latestFeedErr) {
+				errors.push({ route, stage: 'heartbeat_query', message: latestFeedErr.message });
+				continue;
+			}
+
+			const lastPostAt = latestFeed?.created_at ? new Date(latestFeed.created_at).getTime() : 0;
+			if (lastPostAt && Date.now() - lastPostAt < SOCIAL_HEARTBEAT_MS) {
+				skipped++;
+				continue;
+			}
+
+			skipDuplicateStatusLog = true;
+			heartbeatLatestPost = latestFeed;
+		}
+
+		const repostContent = heartbeatLatestPost?.content?.trim();
+		if (skipDuplicateStatusLog && repostContent) {
+			const { error: feedInsertErr } = await supabase.from('social_feed').insert({
+				line: route,
+				content: repostContent,
+				status_context: currentStatus,
+				alert_details: heartbeatLatestPost.alert_details ?? null
+			});
+			if (feedInsertErr) {
+				errors.push({ route, stage: 'feed_insert', message: feedInsertErr.message });
+				continue;
+			}
+			generated.push({ route, status: currentStatus, content: repostContent, quietRepost: true });
+			continue;
+		}
+
+		if (!model) {
+			errors.push({ route, stage: 'gemini', message: 'GEMINI_API_KEY not set' });
 			continue;
 		}
 
@@ -93,14 +138,16 @@ Write a single social media post (max 280 characters) reacting to your current s
 			const result = await model.generateContent(prompt);
 			const content = result.response.text().trim().slice(0, 280);
 
-			const { error: logInsertErr } = await supabase.from('train_status_logs').insert({
-				line: route,
-				status_text: currentStatus,
-				reason: alertDescs || null
-			});
-			if (logInsertErr) {
-				errors.push({ route, stage: 'log_insert', message: logInsertErr.message });
-				continue;
+			if (!skipDuplicateStatusLog) {
+				const { error: logInsertErr } = await supabase.from('train_status_logs').insert({
+					line: route,
+					status_text: currentStatus,
+					reason: alertDescs || null
+				});
+				if (logInsertErr) {
+					errors.push({ route, stage: 'log_insert', message: logInsertErr.message });
+					continue;
+				}
 			}
 
 			const { error: feedInsertErr } = await supabase.from('social_feed').insert({
