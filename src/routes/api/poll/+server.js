@@ -17,7 +17,7 @@ export async function POST({ request }) {
 
 	let trainData;
 	try {
-		trainData = await fetchTrainData();
+		trainData = await fetchTrainData({ bypassCache: true });
 	} catch (err) {
 		return json({ error: 'MTA fetch failed', detail: err.message }, { status: 500 });
 	}

@@ -121,8 +121,8 @@ let cachedData = null;
 
 let inflight = null;
 
-export async function fetchTrainData() {
-	if (cachedData && (Date.now() - cachedData.cacheTime.getTime()) / 1000 < CACHE_TTL) {
+export async function fetchTrainData({ bypassCache = false } = {}) {
+	if (!bypassCache && cachedData && (Date.now() - cachedData.cacheTime.getTime()) / 1000 < CACHE_TTL) {
 		return cachedData;
 	}
 
