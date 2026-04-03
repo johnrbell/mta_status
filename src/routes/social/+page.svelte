@@ -6,6 +6,8 @@
 
 	let expanded = $state({});
 	let activeStory = $state(null);
+	let storiesEl = $state(null);
+	let scrollFade = $state('right');
 
 	const lineOrder = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','S'];
 
@@ -45,6 +47,17 @@
 		if (e.key === 'Escape') closeStory();
 	}
 
+	function updateScrollFade() {
+		if (!storiesEl) return;
+		const { scrollLeft, scrollWidth, clientWidth } = storiesEl;
+		const atStart = scrollLeft <= 2;
+		const atEnd = scrollLeft + clientWidth >= scrollWidth - 2;
+		if (atStart && atEnd) scrollFade = 'none';
+		else if (atStart) scrollFade = 'right';
+		else if (atEnd) scrollFade = 'left';
+		else scrollFade = 'both';
+	}
+
 	function timeAgo(dateStr) {
 		const now = Date.now();
 		const then = new Date(dateStr).getTime();
@@ -70,8 +83,8 @@
 	</div>
 
 	{#if stories.length > 0}
-		<div class="stories-wrap">
-			<div class="stories-bar">
+		<div class="stories-wrap" class:fade-right={scrollFade === 'right'} class:fade-left={scrollFade === 'left'} class:fade-both={scrollFade === 'both'}>
+			<div class="stories-bar" bind:this={storiesEl} onscroll={updateScrollFade}>
 				{#each stories as { line }}
 					<button class="story-item" onclick={() => openStory(line)}>
 						<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
@@ -188,8 +201,21 @@
 	.stories-wrap {
 		margin-bottom: 8px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.stories-wrap.fade-right {
 		-webkit-mask-image: linear-gradient(to right, black 85%, transparent);
 		mask-image: linear-gradient(to right, black 85%, transparent);
+	}
+
+	.stories-wrap.fade-left {
+		-webkit-mask-image: linear-gradient(to left, black 85%, transparent);
+		mask-image: linear-gradient(to left, black 85%, transparent);
+	}
+
+	.stories-wrap.fade-both {
+		-webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+		mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 	}
 
 	.stories-bar {
