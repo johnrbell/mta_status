@@ -90,9 +90,10 @@
 	}
 
 	.feed-subtitle {
-		font-size: clamp(24px, 8.5vw, 36px);
+		font-size: clamp(18px, 5.5vw, 30px);
 		font-weight: 400;
 		line-height: 1.2;
+		white-space: nowrap;
 	}
 
 	.empty {
