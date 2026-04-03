@@ -72,7 +72,9 @@ export async function POST({ request }) {
 			.map((p, i) => `${i + 1}. "${p.content}"`)
 			.join('\n');
 
-		const alertDescs = (train.alerts || [])
+		const alerts = train.alerts || [];
+		const mtaAlertTypes = [...new Set(alerts.map(a => a.type))].join(', ');
+		const alertDescs = alerts
 			.map(a => a.description)
 			.filter(Boolean)
 			.join('; ');
@@ -80,7 +82,7 @@ export async function POST({ request }) {
 		const persona = personas[route] || 'A New York City subway train.';
 		const prompt = `You are the ${route} train on the NYC subway, posting on social media. Your personality: ${persona}
 
-Current status: ${currentStatus}
+MTA status: ${mtaAlertTypes || 'Good Service'}
 ${alertDescs ? `MTA alert details: ${alertDescs}` : ''}
 ${historyStr ? `Recent status history: ${historyStr}` : 'This is the first status update.'}
 ${prevPostsStr ? `Your recent posts:\n${prevPostsStr}` : ''}
