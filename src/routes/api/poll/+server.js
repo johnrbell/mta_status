@@ -29,7 +29,7 @@ export async function POST({ request }) {
 			.eq('line', route)
 			.order('created_at', { ascending: false })
 			.limit(1)
-			.single();
+			.maybeSingle();
 
 		if (lastLog && lastLog.status_text === currentStatus) continue;
 
