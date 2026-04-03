@@ -11,7 +11,14 @@ jobs:
     steps:
       - name: Trigger poll endpoint
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
+          response=$(curl -s -L -w "\n%{http_code}" \
             -X POST \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.POLL_URL }}"
+            "${{ secrets.POLL_URL }}")
+          code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | sed '$d')
+          echo "HTTP $code"
+          echo "$body"
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            exit 1
+          fi
