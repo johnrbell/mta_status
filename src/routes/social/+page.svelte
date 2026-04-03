@@ -70,14 +70,16 @@
 	</div>
 
 	{#if stories.length > 0}
-		<div class="stories-bar">
-			{#each stories as { line }}
-				<button class="story-item" onclick={() => openStory(line)}>
-					<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
-						{line}
-					</div>
-				</button>
-			{/each}
+		<div class="stories-wrap">
+			<div class="stories-bar">
+				{#each stories as { line }}
+					<button class="story-item" onclick={() => openStory(line)}>
+						<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
+							{line}
+						</div>
+					</button>
+				{/each}
+			</div>
 		</div>
 	{/if}
 
@@ -183,13 +185,29 @@
 		white-space: nowrap;
 	}
 
+	.stories-wrap {
+		position: relative;
+		margin-bottom: 8px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.stories-wrap::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 48px;
+		height: 100%;
+		background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.85));
+		pointer-events: none;
+		z-index: 1;
+	}
+
 	.stories-bar {
 		display: flex;
 		gap: 8px;
 		overflow-x: auto;
 		padding: 4px 0 16px;
-		margin-bottom: 8px;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 		scrollbar-width: none;
 		-ms-overflow-style: none;
 	}
