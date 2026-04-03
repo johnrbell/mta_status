@@ -7,6 +7,8 @@
 	let expanded = $state({});
 	let activeStory = $state(null);
 
+	const lineOrder = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','S'];
+
 	let stories = $derived.by(() => {
 		const seen = new Map();
 		for (const post of data.posts) {
@@ -14,7 +16,13 @@
 				seen.set(post.line, post);
 			}
 		}
-		return [...seen.entries()].map(([line, post]) => ({ line, post }));
+		return [...seen.entries()]
+			.map(([line, post]) => ({ line, post }))
+			.sort((a, b) => {
+				const ai = lineOrder.indexOf(a.line);
+				const bi = lineOrder.indexOf(b.line);
+				return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+			});
 	});
 
 	function toggleDetails(id) {
@@ -65,12 +73,9 @@
 		<div class="stories-bar">
 			{#each stories as { line }}
 				<button class="story-item" onclick={() => openStory(line)}>
-					<div class="story-ring">
-						<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
-							{line}
-						</div>
+					<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
+						{line}
 					</div>
-					<span class="story-label">{trainNames[line] || line}</span>
 				</button>
 			{/each}
 		</div>
@@ -180,9 +185,9 @@
 
 	.stories-bar {
 		display: flex;
-		gap: 16px;
+		gap: 8px;
 		overflow-x: auto;
-		padding: 4px 0 20px;
+		padding: 4px 0 16px;
 		margin-bottom: 8px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 		scrollbar-width: none;
@@ -194,10 +199,6 @@
 	}
 
 	.story-item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 6px;
 		background: none;
 		border: none;
 		cursor: pointer;
@@ -206,43 +207,20 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	.story-ring {
-		width: 62px;
-		height: 62px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 3px;
-	}
-
 	.story-avatar {
-		width: 100%;
-		height: 100%;
+		width: 44px;
+		height: 44px;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 24px;
+		font-size: 22px;
 		font-weight: 700;
 		color: #fff;
 		line-height: 1;
-		border: 2px solid #000;
-		box-sizing: border-box;
 	}
 
-	.story-label {
-		font-size: 11px;
-		color: rgba(255, 255, 255, 0.7);
-		white-space: nowrap;
-		max-width: 64px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-family: inherit;
-	}
-
-	.story-item:active .story-ring {
+	.story-item:active .story-avatar {
 		transform: scale(0.93);
 	}
 
@@ -451,18 +429,10 @@
 			max-width: 700px;
 		}
 
-		.story-ring {
-			width: 72px;
-			height: 72px;
-		}
-
 		.story-avatar {
-			font-size: 28px;
-		}
-
-		.story-label {
-			font-size: 12px;
-			max-width: 72px;
+			width: 52px;
+			height: 52px;
+			font-size: 26px;
 		}
 
 		.post-avatar {
