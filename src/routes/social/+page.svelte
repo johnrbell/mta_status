@@ -24,9 +24,8 @@
 
 <div class="feed">
 	<div class="feed-header">
-		<a href="/" class="back-link">← Back</a>
-		<h1>MTA Social</h1>
-		<p class="feed-subtitle">What the trains are saying</p>
+		<div class="feed-title">MTA Social</div>
+		<div class="feed-subtitle">What the trains are saying</div>
 	</div>
 
 	{#if data.posts.length === 0}
@@ -52,9 +51,9 @@
 
 <style>
 	.feed {
-		max-width: 600px;
 		margin: 0 auto;
 		padding: 28px 24px;
+		box-sizing: border-box;
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		color: #fff;
 		min-height: 100vh;
@@ -66,34 +65,34 @@
 		}
 	}
 
+	@media (max-width: 767px) {
+		.feed {
+			padding: 28px 16px;
+		}
+	}
+
+	@media (max-width: 767px) and (display-mode: standalone) {
+		.feed {
+			padding-top: calc(28px + env(safe-area-inset-top));
+		}
+	}
+
 	.feed-header {
 		margin-bottom: 28px;
 	}
 
-	.back-link {
-		font-size: 14px;
-		color: rgba(255, 255, 255, 0.5);
-		text-decoration: none;
-		display: inline-block;
-		margin-bottom: 12px;
-	}
-
-	.back-link:hover {
-		color: #fff;
-	}
-
-	.feed-header h1 {
-		font-size: clamp(36px, 9vw, 56px);
+	.feed-title {
+		font-size: clamp(42px, 15vw, 64px);
 		font-weight: 700;
-		margin: 0 0 4px 0;
+		letter-spacing: 0.01em;
+		margin-bottom: 4px;
 		line-height: 1.1;
 	}
 
 	.feed-subtitle {
-		font-size: clamp(18px, 4.5vw, 28px);
-		color: rgba(255, 255, 255, 0.6);
-		margin: 0;
+		font-size: clamp(24px, 8.5vw, 36px);
 		font-weight: 400;
+		line-height: 1.2;
 	}
 
 	.empty {
@@ -162,6 +161,7 @@
 	@media (min-width: 890px) {
 		.feed {
 			padding: 40px 48px;
+			max-width: 700px;
 		}
 
 		.post-avatar {
