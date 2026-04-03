@@ -181,6 +181,7 @@
 		font-weight: 400;
 		line-height: 1.2;
 		white-space: nowrap;
+		max-width: 80%;
 	}
 
 	.stories-bar {
