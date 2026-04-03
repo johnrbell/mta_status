@@ -1,5 +1,5 @@
 <script>
-	import { beforeNavigate, afterNavigate, invalidateAll } from '$app/navigation';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 	import { setContext } from 'svelte';
 	import { createBgStore } from '$lib/mode.js';
 	import SubwayCanvas from '$lib/SubwayCanvas.svelte';
@@ -29,15 +29,10 @@
 		setTimeout(() => { loading = false; }, remaining);
 	}
 
+	setContext('loader', { showLoader, hideLoader });
+
 	beforeNavigate(() => showLoader());
 	afterNavigate(() => hideLoader());
-
-	async function handleLogoClick(e) {
-		e.preventDefault();
-		showLoader();
-		await invalidateAll();
-		hideLoader();
-	}
 </script>
 
 {#if loading}
@@ -55,9 +50,7 @@
 	<SubwayCanvas />
 {/if}
 
-<div class="signage-wrap">
-	<a href="/" class="signage-header" onclick={handleLogoClick}>MTA Status</a>
-	<div class="signage-subheader">Subway, at a glance.</div>
+<div class="content-layer">
 	{@render children()}
 </div>
 
@@ -147,60 +140,10 @@
 		to { transform: rotate(360deg); }
 	}
 
-	/* Signage layout */
-	.signage-wrap {
+	.content-layer {
 		position: relative;
 		z-index: 2;
-		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-		color: #fff;
 		min-height: 100vh;
-		padding: 28px 24px;
-		box-sizing: border-box;
-		margin: 0 auto;
-	}
-
-	@media (display-mode: standalone) {
-		.signage-wrap {
-			padding-top: calc(28px + env(safe-area-inset-top));
-		}
-	}
-
-	.signage-header {
-		display: block;
-		font-size: clamp(42px, 15vw, 64px);
-		font-weight: 700;
-		letter-spacing: 0.01em;
-		margin-bottom: 4px;
-		line-height: 1.1;
-		text-decoration: none;
-		color: #fff;
-		cursor: pointer;
-	}
-
-	.signage-subheader {
-		font-size: clamp(24px, 8.5vw, 36px);
-		font-weight: 400;
-		margin-bottom: 28px;
-		line-height: 1.2;
-	}
-
-	@media (max-width: 767px) {
-		.signage-wrap {
-			padding: 28px 16px;
-		}
-	}
-
-	@media (max-width: 767px) and (display-mode: standalone) {
-		.signage-wrap {
-			padding-top: calc(28px + env(safe-area-inset-top));
-		}
-	}
-
-	@media (min-width: 890px) {
-		.signage-wrap {
-			padding: 40px 48px;
-			max-width: 700px;
-		}
 	}
 
 	.site-footer {

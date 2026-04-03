@@ -60,6 +60,12 @@
 		min-height: 100vh;
 	}
 
+	@media (display-mode: standalone) {
+		.feed {
+			padding-top: calc(28px + env(safe-area-inset-top));
+		}
+	}
+
 	.feed-header {
 		margin-bottom: 28px;
 	}
