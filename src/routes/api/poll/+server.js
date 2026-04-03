@@ -61,6 +61,17 @@ export async function POST({ request }) {
 			.map(h => `${h.status_text} (${new Date(h.created_at).toLocaleString()})`)
 			.join(' → ');
 
+		const { data: recentPosts } = await supabase
+			.from('social_feed')
+			.select('content')
+			.eq('line', route)
+			.order('created_at', { ascending: false })
+			.limit(3);
+
+		const prevPostsStr = (recentPosts || [])
+			.map((p, i) => `${i + 1}. "${p.content}"`)
+			.join('\n');
+
 		const alertDescs = (train.alerts || [])
 			.map(a => a.description)
 			.filter(Boolean)
@@ -72,8 +83,9 @@ export async function POST({ request }) {
 Current status: ${currentStatus}
 ${alertDescs ? `MTA alert details: ${alertDescs}` : ''}
 ${historyStr ? `Recent status history: ${historyStr}` : 'This is the first status update.'}
+${prevPostsStr ? `Your recent posts:\n${prevPostsStr}` : ''}
 
-Write a single social media post (max 280 characters) reacting to your current status, fully in character. Be funny, specific to NYC, and stay in character. Do not use hashtags. Do not use quotation marks around the post. Just the post text, nothing else.`;
+Write a single social media post (max 280 characters) reacting to your current status, fully in character. Be funny, specific to NYC, and stay in character. Do not use hashtags. Do not use quotation marks around the post. Do not repeat yourself from your recent posts. Just the post text, nothing else.`;
 
 		try {
 			const result = await model.generateContent(prompt);
