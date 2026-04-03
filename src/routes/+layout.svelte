@@ -95,7 +95,7 @@
 	.screen {
 		inset: 0;
 		background-color: #222;
-		opacity: 0.7;
+		opacity: 0.8;
 		position: fixed;
 		z-index: 1;
 	}

@@ -3,11 +3,14 @@ import { allRoutes } from '$lib/mta.js';
 
 const FEED_SELECT = 'id, line, content, status_context, alert_details, created_at';
 
+/** Recent global activity; merged with latest post per line so every route with data stays visible. */
+const RECENT_POSTS_LIMIT = 25;
+
 export async function load() {
 	const supabase = getSupabase();
 
 	const [recentRes, ...perLineRes] = await Promise.all([
-		supabase.from('social_feed').select(FEED_SELECT).order('created_at', { ascending: false }).limit(50),
+		supabase.from('social_feed').select(FEED_SELECT).order('created_at', { ascending: false }).limit(RECENT_POSTS_LIMIT),
 		...allRoutes.map((line) =>
 			supabase.from('social_feed').select(FEED_SELECT).eq('line', line).order('created_at', { ascending: false }).limit(1).maybeSingle()
 		)
