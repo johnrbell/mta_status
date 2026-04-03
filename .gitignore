@@ -4,3 +4,5 @@ node_modules/
 /.svelte-kit
 /.vercel
 static/img/bg/
+.vercel
+.env*.local
