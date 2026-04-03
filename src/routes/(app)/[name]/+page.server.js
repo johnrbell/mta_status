@@ -4,7 +4,7 @@ import { allRoutes } from '$lib/mta.js';
 export function load({ params }) {
 	const name = params.name.toUpperCase();
 	if (allRoutes.includes(name)) {
-		redirect(302, '/');
+		redirect(302, '/ez');
 	}
 	error(404, { message: params.name });
 }

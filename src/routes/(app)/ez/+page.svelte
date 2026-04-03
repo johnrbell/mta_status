@@ -51,6 +51,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>MTA Status</title>
+</svelte:head>
+
 <div class="container">
 	{#each lineGroups as group}
 		{@const members = group.map(r => trainMap[r]).filter(Boolean)}

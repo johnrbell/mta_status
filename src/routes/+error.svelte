@@ -8,7 +8,7 @@
 	{:else}
 		<p class="error-msg">Something went wrong.</p>
 	{/if}
-	<a href="/" class="error-link">back to all trains</a>
+	<a href="/ez" class="error-link">back to all trains</a>
 </div>
 
 <style>
