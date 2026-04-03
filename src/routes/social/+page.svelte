@@ -186,21 +186,10 @@
 	}
 
 	.stories-wrap {
-		position: relative;
 		margin-bottom: 8px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-	}
-
-	.stories-wrap::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		width: 48px;
-		height: 100%;
-		background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.85));
-		pointer-events: none;
-		z-index: 1;
+		-webkit-mask-image: linear-gradient(to right, black 85%, transparent);
+		mask-image: linear-gradient(to right, black 85%, transparent);
 	}
 
 	.stories-bar {
