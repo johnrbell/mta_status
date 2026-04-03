@@ -71,7 +71,8 @@ Write a single social media post (max 280 characters) reacting to your current s
 			await supabase.from('social_feed').insert({
 				line: route,
 				content,
-				status_context: currentStatus
+				status_context: currentStatus,
+				alert_details: alertDescs || null
 			});
 
 			generated.push({ route, status: currentStatus, content });

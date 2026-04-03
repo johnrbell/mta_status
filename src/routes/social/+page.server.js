@@ -5,7 +5,7 @@ export async function load() {
 
 	const { data: posts, error } = await supabase
 		.from('social_feed')
-		.select('id, line, content, status_context, created_at')
+		.select('id, line, content, status_context, alert_details, created_at')
 		.order('created_at', { ascending: false })
 		.limit(50);
 

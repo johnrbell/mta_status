@@ -4,6 +4,12 @@
 
 	let { data } = $props();
 
+	let expanded = $state({});
+
+	function toggleDetails(id) {
+		expanded = { ...expanded, [id]: !expanded[id] };
+	}
+
 	function timeAgo(dateStr) {
 		const now = Date.now();
 		const then = new Date(dateStr).getTime();
@@ -43,6 +49,14 @@
 						<span class="post-time">· {timeAgo(post.created_at)}</span>
 					</div>
 					<div class="post-content">{post.content}</div>
+					{#if post.alert_details}
+						<button class="read-more" onclick={() => toggleDetails(post.id)}>
+							{expanded[post.id] ? 'hide details' : 'read more'}
+						</button>
+						{#if expanded[post.id]}
+							<div class="post-details">{post.alert_details}</div>
+						{/if}
+					{/if}
 				</div>
 			</div>
 		{/each}
@@ -157,6 +171,29 @@
 		line-height: 1.45;
 		color: rgba(255, 255, 255, 0.9);
 		word-break: break-word;
+	}
+
+	.read-more {
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.35);
+		font-size: 13px;
+		padding: 4px 0 0 0;
+		cursor: pointer;
+		font-family: inherit;
+	}
+
+	.read-more:hover {
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.post-details {
+		font-size: 13px;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.5);
+		margin-top: 6px;
+		padding: 8px 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
 	@media (min-width: 890px) {
