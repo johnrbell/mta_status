@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/social/$1",
+      "has": [{ "type": "host", "value": "mta.social" }]
+    }
+  ]
+}
