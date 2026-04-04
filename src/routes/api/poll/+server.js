@@ -58,7 +58,7 @@ export async function POST({ request }) {
 		let heartbeatLatestPost = null;
 		const statusUnchanged = lastLog
 			&& lastLog.status_text === currentStatus
-			&& (lastLog.reason ?? null) === currentReason;
+			&& (lastLog.reason || null) === currentReason;
 		if (statusUnchanged) {
 			const { data: latestFeed, error: latestFeedErr } = await supabase
 				.from('social_feed')
