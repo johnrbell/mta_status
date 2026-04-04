@@ -83,7 +83,11 @@ export function processAlerts(feedData) {
 		});
 
 		const isPlanned = alertType.startsWith('Planned');
-		const hasUpcoming = isPlanned && periods.some((p) => (p.start || 0) > now);
+		const upcomingHorizon = 6 * 60 * 60;
+		const hasUpcoming = isPlanned && periods.some((p) => {
+			const start = p.start || 0;
+			return start > now && start <= now + upcomingHorizon;
+		});
 
 		if (!isActive && !hasUpcoming) continue;
 
@@ -96,7 +100,9 @@ export function processAlerts(feedData) {
 
 		let upcomingStart = null;
 		if (!isActive && hasUpcoming) {
-			const futureStarts = periods.map((p) => p.start || 0).filter((s) => s > now);
+			const futureStarts = periods
+				.map((p) => p.start || 0)
+				.filter((s) => s > now && s <= now + upcomingHorizon);
 			upcomingStart = new Date(Math.min(...futureStarts) * 1000);
 		}
 

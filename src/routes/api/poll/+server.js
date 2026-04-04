@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { fetchTrainData, allRoutes } from '$lib/mta.js';
+import { fetchTrainData } from '$lib/mta.js';
 import { getSupabase } from '$lib/supabase.js';
 import { personas } from '$lib/personas.js';
 
