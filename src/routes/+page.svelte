@@ -197,7 +197,7 @@
 	}
 
 	.feed-subtitle {
-		font-size: clamp(16px, 4vw, 24px);
+		font-size: clamp(16px, 6vw, 24px);
 		font-weight: 400;
 		line-height: 1.2;
 		white-space: nowrap;
