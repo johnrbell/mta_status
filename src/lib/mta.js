@@ -29,8 +29,17 @@ function pickWorstStatus(types) {
 }
 
 function mapStatus(status) {
-	if (status.startsWith('Planned')) return 'planned work.';
 	switch (status) {
+		case 'Planned - Suspended':
+			return 'suspended.';
+		case 'Planned - Part Suspended':
+			return 'part suspended.';
+		case 'Planned - Reroute':
+			return 'rerouted.';
+		case 'Planned - Stops Skipped':
+			return 'stops skipped.';
+		case 'Planned - Express to Local':
+			return 'express to local.';
 		case 'Severe Delays':
 		case 'Delays':
 			return 'trains cooked.';
@@ -48,6 +57,7 @@ function mapStatus(status) {
 		case 'Special Schedule':
 			return 'special schedule.';
 		default:
+			if (status.startsWith('Planned')) return 'planned work.';
 			return status.toLowerCase() + '.';
 	}
 }
@@ -158,7 +168,7 @@ export function processAlerts(feedData) {
 		if (active.length > 0) {
 			status = mapStatus(pickWorstStatus(active.map((a) => a.type)));
 		} else if (upcoming.length > 0) {
-			status = 'planned work.';
+			status = mapStatus(pickWorstStatus(upcoming.map((a) => a.type)));
 		} else {
 			status = 'all good.';
 		}
