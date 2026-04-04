@@ -19,7 +19,7 @@
 		['J', 'Z'],
 		['L'],
 		['N', 'Q', 'R', 'W'],
-		['S'],
+		['GS'],
 	];
 
 	function byRoute(trains) {
@@ -72,7 +72,7 @@
 					onkeydown={hasAlerts ? (e) => { if (e.key === 'Enter') toggleExpand(train.route); } : undefined}
 				>
 					<div class="circle" style="background-color: {lineColors[train.route] || '#888'}">
-						<span class="letter">{train.route}</span>
+						<span class="letter">{train.route === 'GS' ? 'S' : train.route}</span>
 					</div>
 					<div class="status">{train.statusDetails.statusSummary}</div>
 				</div>
@@ -81,7 +81,7 @@
 		{#if expandedTrain}
 			<div class="alerts">
 				<div class="alerts-header">
-					<span class="alerts-circle" style="background-color: {lineColors[expandedTrain.route] || '#888'}">{expandedTrain.route}</span>
+					<span class="alerts-circle" style="background-color: {lineColors[expandedTrain.route] || '#888'}">{expandedTrain.route === 'GS' ? 'S' : expandedTrain.route}</span>
 					Alerts
 				</div>
 			{#each expandedTrain.alerts as alert}

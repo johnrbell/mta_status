@@ -8,5 +8,6 @@ export const lineColors = {
 	'J': '#996633', 'Z': '#996633',
 	'L': '#A7A9AC',
 	'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'W': '#FCCC0A',
-	'S': '#808183'
+	'S': '#808183',
+	'GS': '#808183'
 };

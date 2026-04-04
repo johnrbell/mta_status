@@ -9,7 +9,7 @@
 	let storiesEl = $state(null);
 	let scrollFade = $state('right');
 
-	const lineOrder = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','S'];
+	const lineOrder = ['1','2','3','4','5','6','7','A','C','E','B','D','F','M','G','J','Z','L','N','Q','R','W','GS'];
 
 	let stories = $derived.by(() => {
 		const seen = new Map();
@@ -87,9 +87,9 @@
 			<div class="stories-bar" bind:this={storiesEl} onscroll={updateScrollFade}>
 				{#each stories as { line }}
 					<button class="story-item" onclick={() => openStory(line)}>
-						<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
-							{line}
-						</div>
+					<div class="story-avatar" style="background-color: {lineColors[line] || '#888'}">
+						{line === 'GS' ? 'S' : line}
+					</div>
 					</button>
 				{/each}
 			</div>
@@ -102,7 +102,7 @@
 		{#each data.posts as post}
 			<div class="post">
 				<div class="post-avatar" style="background-color: {lineColors[post.line] || '#888'}">
-					{post.line}
+					{post.line === 'GS' ? 'S' : post.line}
 				</div>
 				<div class="post-body">
 					<div class="post-meta">
@@ -134,7 +134,7 @@
 				<button class="modal-close" onclick={closeStory} aria-label="Close">&times;</button>
 				<div class="modal-header">
 					<div class="modal-avatar" style="background-color: {lineColors[activeStory] || '#888'}">
-						{activeStory}
+						{activeStory === 'GS' ? 'S' : activeStory}
 					</div>
 					<div class="modal-meta">
 						<span class="modal-name">{trainNames[activeStory] || activeStory}</span>

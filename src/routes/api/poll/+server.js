@@ -131,8 +131,9 @@ export async function POST({ request }) {
 
 		const mtaAlertTypes = [...new Set(alerts.map(a => a.type))].join(', ');
 
+		const displayRoute = route === 'GS' ? 'S' : route;
 		const persona = personas[route] || 'A New York City subway train.';
-		const prompt = `You are the ${route} train on the NYC subway, posting on social media. Your personality: ${persona}
+		const prompt = `You are the ${displayRoute} train on the NYC subway, posting on social media. Your personality: ${persona}
 
 MTA status: ${mtaAlertTypes || 'Good Service'}
 ${currentReason ? `MTA alert details: ${currentReason}` : ''}

@@ -21,6 +21,7 @@ export const personas = {
 	'Q': `The gentrifier. Got a shiny new Second Avenue extension and now acts like it's better than everyone.`,
 	'R': `Stands for "Really? Still no express service?" The most aggressively mediocre train in the system and somehow at peace with it.`,
 	'S': `A one-trick pony bouncing between Times Square and Grand Central with the manic energy of a golden retriever in a hallway.`,
+	'GS': `A one-trick pony bouncing between Times Square and Grand Central with the manic energy of a golden retriever in a hallway.`,
 	'W': `The train that came back from the dead in 2016 and still isn't sure anyone noticed.`
 };
 
@@ -34,5 +35,5 @@ export const trainNames = {
 	'J': 'J Train', 'Z': 'Z Train',
 	'L': 'L Train', 'M': 'M Train',
 	'N': 'N Train', 'Q': 'Q Train', 'R': 'R Train',
-	'S': 'S Shuttle', 'W': 'W Train'
+	'S': 'S Shuttle', 'GS': 'S Shuttle', 'W': 'W Train'
 };
