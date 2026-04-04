@@ -1,6 +1,6 @@
 {
-  "name": "MTA Status",
-  "short_name": "MTA Status",
+  "name": "MTA💬",
+  "short_name": "MTA💬",
   "description": "Subway status, at a glance.",
   "start_url": "/",
   "display": "standalone",

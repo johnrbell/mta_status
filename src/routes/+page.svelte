@@ -73,12 +73,12 @@
 </script>
 
 <svelte:head>
-	<title>MTA Social</title>
+	<title>MTA💬</title>
 </svelte:head>
 
 <div class="feed">
 	<div class="feed-header">
-		<div class="feed-title">MTA Social</div>
+		<a href="/" class="feed-title" data-sveltekit-reload>MTA💬</a>
 		<div class="feed-subtitle">What the trains are saying</div>
 	</div>
 
@@ -184,11 +184,16 @@
 	}
 
 	.feed-title {
+		display: block;
 		font-size: clamp(42px, 15vw, 64px);
 		font-weight: 700;
 		letter-spacing: 0.01em;
 		margin-bottom: 4px;
 		line-height: 1.1;
+		text-decoration: none;
+		color: inherit;
+		cursor: pointer;
+		width: fit-content;
 	}
 
 	.feed-subtitle {

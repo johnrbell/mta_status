@@ -9,8 +9,9 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 ICON_CANDIDATES = [
-	ROOT / "static/img/icons/android-icon-512x512.png",
+	# Prefer flat iOS marketing export (IconKitchen); avoids adaptive-launcher shine/border on 512.
 	Path.home() / "Desktop/IconKitchen-Output/ios/AppIcon~ios-marketing.png",
+	ROOT / "static/img/icons/android-icon-512x512.png",
 ]
 OUT_DIR = ROOT / "static/img/splash"
 
