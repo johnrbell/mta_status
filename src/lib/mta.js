@@ -31,15 +31,15 @@ function pickWorstStatus(types) {
 function mapStatus(status) {
 	switch (status) {
 		case 'Planned - Suspended':
-			return 'suspended.';
+			return 'planned - suspended.';
 		case 'Planned - Part Suspended':
-			return 'part suspended.';
+			return 'planned - part suspended.';
 		case 'Planned - Reroute':
-			return 'rerouted.';
+			return 'planned - reroute.';
 		case 'Planned - Stops Skipped':
-			return 'stops skipped.';
+			return 'planned - stops skipped.';
 		case 'Planned - Express to Local':
-			return 'express to local.';
+			return 'planned - express to local.';
 		case 'Severe Delays':
 		case 'Delays':
 			return 'trains cooked.';
