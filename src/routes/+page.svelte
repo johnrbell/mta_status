@@ -73,7 +73,7 @@
 </script>
 
 <svelte:head>
-	<title>MTA💬</title>
+	<title>MTA Social</title>
 </svelte:head>
 
 <div class="feed">
