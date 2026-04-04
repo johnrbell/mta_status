@@ -36,7 +36,10 @@ export async function POST({ request }) {
 		const currentStatus = train.statusDetails.statusSummary;
 		const alerts = train.alerts || [];
 		const alertDescs = alerts
-			.map(a => a.description)
+			.map(a => {
+				const parts = [a.description, a.periodText].filter(Boolean);
+				return parts.join(' — ');
+			})
 			.filter(Boolean)
 			.join('; ');
 		const currentReason = alertDescs || null;

@@ -91,7 +91,9 @@
 						<span class="upcoming-badge">Upcoming · {formatDate(alert.upcomingStart)}</span>
 					{/if}
 					<div class="alert-desc">{alert.description}</div>
-					{#if !alert.upcoming && alert.createdAt}
+					{#if alert.periodText}
+						<div class="alert-date">{alert.periodText}</div>
+					{:else if !alert.upcoming && alert.createdAt}
 						<div class="alert-date">{formatDate(alert.createdAt)}</div>
 					{/if}
 				</div>

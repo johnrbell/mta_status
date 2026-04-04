@@ -64,6 +64,29 @@ const sortOrder = {
 	'G': 14, 'J': 15, 'Z': 16, 'L': 17, 'N': 18, 'Q': 19, 'R': 20, 'W': 21, 'S': 22
 };
 
+function formatPeriods(periods) {
+	if (!periods.length) return null;
+	const sorted = periods
+		.map((p) => ({ start: p.start || 0, end: p.end || null }))
+		.filter((p) => p.start)
+		.sort((a, b) => a.start - b.start);
+	if (!sorted.length) return null;
+
+	const fmt = (ts) => {
+		const d = new Date(ts * 1000);
+		const day = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+		const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+		return `${day} ${time}`;
+	};
+
+	const first = sorted[0];
+	const last = sorted[sorted.length - 1];
+	if (last.end) {
+		return `${fmt(first.start)} to ${fmt(last.end)}`;
+	}
+	return `Starting ${fmt(first.start)}`;
+}
+
 export function processAlerts(feedData) {
 	const now = Date.now() / 1000;
 	const activeAlerts = {};
@@ -106,6 +129,8 @@ export function processAlerts(feedData) {
 			upcomingStart = new Date(Math.min(...futureStarts) * 1000);
 		}
 
+			const periodText = formatPeriods(periods);
+
 		for (const ie of alert.informed_entity || []) {
 			if (ie.route_id && allRoutes.includes(ie.route_id)) {
 				const alertObj = {
@@ -113,7 +138,8 @@ export function processAlerts(feedData) {
 					description: headerText,
 					createdAt,
 					upcoming: !isActive && hasUpcoming,
-					upcomingStart
+					upcomingStart,
+					periodText
 				};
 				const bucket = isActive ? activeAlerts : upcomingAlerts;
 				if (!bucket[ie.route_id]) bucket[ie.route_id] = [];
