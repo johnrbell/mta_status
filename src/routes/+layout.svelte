@@ -48,6 +48,7 @@
 	<div class="screen"></div>
 {:else if $bgMode === 2}
 	<SubwayCanvas />
+	<div class="screen canvas-screen"></div>
 {/if}
 
 <div class="content-layer">
@@ -98,6 +99,11 @@
 		opacity: 0.8;
 		position: fixed;
 		z-index: 1;
+	}
+
+	.canvas-screen {
+		background-color: #000;
+		opacity: 0.2;
 	}
 
 	.bg {
