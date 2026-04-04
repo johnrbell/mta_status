@@ -66,7 +66,8 @@ const sortOrder = {
 
 export function processAlerts(feedData) {
 	const now = Date.now() / 1000;
-	const routeAlerts = {};
+	const activeAlerts = {};
+	const upcomingAlerts = {};
 
 	for (const e of feedData.entity || []) {
 		const alert = e.alert;
@@ -74,12 +75,17 @@ export function processAlerts(feedData) {
 		const alertType = mercury ? mercury.alert_type : null;
 		if (!alertType) continue;
 
-		const active = (alert.active_period || []).some((p) => {
+		const periods = alert.active_period || [];
+		const isActive = periods.some((p) => {
 			const start = p.start || 0;
 			const end = p.end || Infinity;
 			return now >= start && now <= end;
 		});
-		if (!active) continue;
+
+		const isPlanned = alertType.startsWith('Planned');
+		const hasUpcoming = isPlanned && periods.some((p) => (p.start || 0) > now);
+
+		if (!isActive && !hasUpcoming) continue;
 
 		let headerText = '';
 		if (alert.header_text && alert.header_text.translation) {
@@ -88,26 +94,44 @@ export function processAlerts(feedData) {
 		}
 		const createdAt = mercury.created_at ? new Date(mercury.created_at * 1000) : null;
 
+		let upcomingStart = null;
+		if (!isActive && hasUpcoming) {
+			const futureStarts = periods.map((p) => p.start || 0).filter((s) => s > now);
+			upcomingStart = new Date(Math.min(...futureStarts) * 1000);
+		}
+
 		for (const ie of alert.informed_entity || []) {
 			if (ie.route_id && allRoutes.includes(ie.route_id)) {
-				if (!routeAlerts[ie.route_id]) routeAlerts[ie.route_id] = [];
-				routeAlerts[ie.route_id].push({
+				const alertObj = {
 					type: alertType,
 					description: headerText,
-					createdAt
-				});
+					createdAt,
+					upcoming: !isActive && hasUpcoming,
+					upcomingStart
+				};
+				const bucket = isActive ? activeAlerts : upcomingAlerts;
+				if (!bucket[ie.route_id]) bucket[ie.route_id] = [];
+				bucket[ie.route_id].push(alertObj);
 			}
 		}
 	}
 
 	const trains = [];
 	for (const route of allRoutes) {
-		const alerts = routeAlerts[route] || [];
-		const status =
-			alerts.length > 0
-				? mapStatus(pickWorstStatus(alerts.map((a) => a.type)))
-				: 'all good.';
-		trains[sortOrder[route]] = { route, statusDetails: { statusSummary: status }, alerts };
+		const active = activeAlerts[route] || [];
+		const upcoming = upcomingAlerts[route] || [];
+		const allAlerts = [...active, ...upcoming];
+
+		let status;
+		if (active.length > 0) {
+			status = mapStatus(pickWorstStatus(active.map((a) => a.type)));
+		} else if (upcoming.length > 0) {
+			status = 'planned work.';
+		} else {
+			status = 'all good.';
+		}
+
+		trains[sortOrder[route]] = { route, statusDetails: { statusSummary: status }, alerts: allAlerts };
 	}
 
 	return { trains, cacheTime: new Date() };

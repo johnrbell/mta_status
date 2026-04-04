@@ -84,15 +84,18 @@
 					<span class="alerts-circle" style="background-color: {lineColors[expandedTrain.route] || '#888'}">{expandedTrain.route}</span>
 					Alerts
 				</div>
-				{#each expandedTrain.alerts as alert}
-					<div class="alert-item">
-						<span class="alert-type">{alert.type}</span>
-						<div class="alert-desc">{alert.description}</div>
-						{#if alert.createdAt}
-							<div class="alert-date">{formatDate(alert.createdAt)}</div>
-						{/if}
-					</div>
-				{/each}
+			{#each expandedTrain.alerts as alert}
+				<div class="alert-item">
+					<span class="alert-type">{alert.type}</span>
+					{#if alert.upcoming}
+						<span class="upcoming-badge">Upcoming · {formatDate(alert.upcomingStart)}</span>
+					{/if}
+					<div class="alert-desc">{alert.description}</div>
+					{#if !alert.upcoming && alert.createdAt}
+						<div class="alert-date">{formatDate(alert.createdAt)}</div>
+					{/if}
+				</div>
+			{/each}
 			</div>
 		{/if}
 	{/each}
@@ -198,6 +201,13 @@
 		font-size: 14px;
 		font-weight: bold;
 		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.upcoming-badge {
+		font-size: 11px;
+		font-weight: 600;
+		color: rgba(255, 200, 50, 0.9);
+		margin-left: 6px;
 	}
 
 	.alert-desc {
