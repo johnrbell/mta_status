@@ -34,10 +34,16 @@ export async function POST({ request }) {
 		if (!train) continue;
 		const { route } = train;
 		const currentStatus = train.statusDetails.statusSummary;
+		const alerts = train.alerts || [];
+		const alertDescs = alerts
+			.map(a => a.description)
+			.filter(Boolean)
+			.join('; ');
+		const currentReason = alertDescs || null;
 
 		const { data: lastLog, error: logError } = await supabase
 			.from('train_status_logs')
-			.select('status_text')
+			.select('status_text, reason')
 			.eq('line', route)
 			.order('created_at', { ascending: false })
 			.limit(1)
@@ -50,7 +56,10 @@ export async function POST({ request }) {
 
 		let skipDuplicateStatusLog = false;
 		let heartbeatLatestPost = null;
-		if (lastLog && lastLog.status_text === currentStatus) {
+		const statusUnchanged = lastLog
+			&& lastLog.status_text === currentStatus
+			&& (lastLog.reason ?? null) === currentReason;
+		if (statusUnchanged) {
 			const { data: latestFeed, error: latestFeedErr } = await supabase
 				.from('social_feed')
 				.select('created_at, content, alert_details')
@@ -117,18 +126,13 @@ export async function POST({ request }) {
 			.map((p, i) => `${i + 1}. "${p.content}"`)
 			.join('\n');
 
-		const alerts = train.alerts || [];
 		const mtaAlertTypes = [...new Set(alerts.map(a => a.type))].join(', ');
-		const alertDescs = alerts
-			.map(a => a.description)
-			.filter(Boolean)
-			.join('; ');
 
 		const persona = personas[route] || 'A New York City subway train.';
 		const prompt = `You are the ${route} train on the NYC subway, posting on social media. Your personality: ${persona}
 
 MTA status: ${mtaAlertTypes || 'Good Service'}
-${alertDescs ? `MTA alert details: ${alertDescs}` : ''}
+${currentReason ? `MTA alert details: ${currentReason}` : ''}
 ${historyStr ? `Recent status history: ${historyStr}` : 'This is the first status update.'}
 ${prevPostsStr ? `Your recent posts:\n${prevPostsStr}` : ''}
 
@@ -142,7 +146,7 @@ Write a single social media post (max 280 characters) reacting to your current s
 				const { error: logInsertErr } = await supabase.from('train_status_logs').insert({
 					line: route,
 					status_text: currentStatus,
-					reason: alertDescs || null
+					reason: currentReason
 				});
 				if (logInsertErr) {
 					errors.push({ route, stage: 'log_insert', message: logInsertErr.message });
@@ -154,7 +158,7 @@ Write a single social media post (max 280 characters) reacting to your current s
 				line: route,
 				content,
 				status_context: currentStatus,
-				alert_details: alertDescs || null
+				alert_details: currentReason
 			});
 			if (feedInsertErr) {
 				errors.push({ route, stage: 'feed_insert', message: feedInsertErr.message });
