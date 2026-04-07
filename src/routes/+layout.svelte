@@ -46,6 +46,7 @@
 {#if $bgMode === 1}
 	<div class="bg" style="background-image: url({data.bgImg})"></div>
 	<div class="screen"></div>
+	<div class="vignette"></div>
 {:else if $bgMode === 2}
 	<SubwayCanvas />
 	<div class="screen canvas-screen"></div>
@@ -115,6 +116,16 @@
 		z-index: 0;
 		position: fixed;
 		text-align: center;
+	}
+
+	.vignette {
+		position: fixed;
+		inset: 0;
+		z-index: 1;
+		pointer-events: none;
+		background:
+			linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 30%),
+			linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 30%);
 	}
 
 	/* Signage loader */
