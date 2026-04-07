@@ -124,8 +124,8 @@
 		z-index: 1;
 		pointer-events: none;
 		background:
-			linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 30%),
-			linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 30%);
+			linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 15%),
+			linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 15%);
 	}
 
 	/* Signage loader */
