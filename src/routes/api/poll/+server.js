@@ -7,6 +7,7 @@ import { personas } from '$lib/personas.js';
 
 /** If status is unchanged, still post to social_feed when the line's last post is older than this (ms). */
 const SOCIAL_HEARTBEAT_MS = 24 * 60 * 60 * 1000;
+const SKIP_PLANNED_REPOSTS = true; // toggle: set false to re-enable planned reposts
 
 export async function POST({ request }) {
 	const secret = request.headers.get('x-cron-secret');
@@ -84,6 +85,11 @@ export async function POST({ request }) {
 
 			skipDuplicateStatusLog = true;
 			heartbeatLatestPost = latestFeed;
+		}
+
+		if (SKIP_PLANNED_REPOSTS && currentStatus.startsWith('planned')) {
+			skipped++;
+			continue;
 		}
 
 		const repostContent = heartbeatLatestPost?.content?.trim();
