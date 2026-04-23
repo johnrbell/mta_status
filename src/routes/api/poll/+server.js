@@ -9,6 +9,28 @@ import { personas } from '$lib/personas.js';
 const SOCIAL_HEARTBEAT_MS = 24 * 60 * 60 * 1000;
 const SKIP_PLANNED_REPOSTS = true; // toggle: set false to re-enable planned reposts
 
+const GEMINI_MAX_RETRIES = 3;
+const GEMINI_INITIAL_BACKOFF_MS = 2_000;
+const INTER_REQUEST_DELAY_MS = 1_500;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function generateWithRetry(model, prompt) {
+	for (let attempt = 0; attempt <= GEMINI_MAX_RETRIES; attempt++) {
+		try {
+			const result = await model.generateContent(prompt);
+			return result;
+		} catch (err) {
+			const status = err?.status ?? err?.httpStatusCode ?? err?.code;
+			const retryable = status === 429 || status === 503 || String(status) === '429' || String(status) === '503';
+			if (!retryable || attempt === GEMINI_MAX_RETRIES) throw err;
+			const backoff = GEMINI_INITIAL_BACKOFF_MS * Math.pow(2, attempt);
+			const jitter = Math.random() * backoff * 0.5;
+			await sleep(backoff + jitter);
+		}
+	}
+}
+
 export async function POST({ request }) {
 	const secret = request.headers.get('x-cron-secret');
 	if (!env.CRON_SECRET || secret !== env.CRON_SECRET) {
@@ -17,7 +39,7 @@ export async function POST({ request }) {
 
 	const supabase = getSupabase();
 	const genAI = env.GEMINI_API_KEY ? new GoogleGenerativeAI(env.GEMINI_API_KEY) : null;
-	const model = genAI?.getGenerativeModel({ model: 'gemini-2.5-flash' });
+	const model = genAI?.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
 	let trainData;
 	try {
@@ -148,8 +170,10 @@ ${prevPostsStr ? `Your recent posts:\n${prevPostsStr}` : ''}
 
 Write a single social media post (max 280 characters) reacting to your current status, fully in character. Be funny, specific to NYC, and stay in character. Do not use hashtags. Do not use quotation marks around the post. Do not repeat yourself from your recent posts. Just the post text, nothing else.`;
 
+		if (generated.length > 0) await sleep(INTER_REQUEST_DELAY_MS);
+
 		try {
-			const result = await model.generateContent(prompt);
+			const result = await generateWithRetry(model, prompt);
 			const content = result.response.text().trim().slice(0, 280);
 
 			if (!skipDuplicateStatusLog) {
