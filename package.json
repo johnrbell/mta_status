@@ -17,7 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "@sveltejs/adapter-vercel": "^6.3.3",
-    "@sveltejs/kit": "^2.21.1",
+    "@sveltejs/kit": "^2.60.1",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "svelte": "^5.28.2",
     "vite": "^6.3.1"
